@@ -1,11 +1,11 @@
 # Question_Generation
 
 ### Installing Dependencies
-##### 1. Create virtual environment
+###### 1. Create virtual environment
 ```
 python3 -m virtualenv env
 ```
-##### 2. Activate virtual environment
+###### 2. Activate virtual environment
 ###### Windows: 
 ```
 env\scripts\activate
@@ -14,19 +14,19 @@ env\scripts\activate
 ```
 source env/bin/activate
 ```
-##### 3. Install dependencies (from requirements.txt)
+###### 3. Install dependencies (from requirements.txt)
 ```
 pip install -r requirements.txt
 ```
-##### 4. Clone fastText repository
+###### 4. Clone fastText repository
 ```
 git clone https://github.com/facebookresearch/fastText.git
 ```
-##### 5. Change directory to `fastText`
+###### 5. Change directory to `fastText`
 ```
 cd fastText
 ```
-##### 6. Install `fastText` package
+###### 6. Install `fastText` package
 ```
 pip install .
 ```
