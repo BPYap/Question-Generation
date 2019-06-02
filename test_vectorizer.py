@@ -1,4 +1,5 @@
 from src.vectorizer.fast_text import FTVectorizer
+from src.vectorizer.glove import GloveVectorizer
 from src.vectorizer.universal_sentence_encoder import USEVectorizer
 
 
@@ -14,7 +15,7 @@ if __name__ == '__main__':
         "How much does an organisation need to pay to register as an Approved Institution (AI) with "
         "Ministry of Social and Family Development (MSF)?",
         ]
-    vectorizers = [USEVectorizer(), FTVectorizer()]
+    vectorizers = [FTVectorizer(), GloveVectorizer, USEVectorizer()]
 
     for i, sentence in enumerate(sentences):
         print("=" * 80)
