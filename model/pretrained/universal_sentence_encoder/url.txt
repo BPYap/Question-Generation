@@ -1,0 +1,1 @@
+https://tfhub.dev/google/universal-sentence-encoder-large/3

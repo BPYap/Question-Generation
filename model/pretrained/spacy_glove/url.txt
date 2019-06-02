@@ -1,0 +1,1 @@
+https://github.com/explosion/spacy-models/releases/tag/en_vectors_web_lg-2.1.0
