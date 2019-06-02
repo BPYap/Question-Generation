@@ -34,7 +34,7 @@ pip install .
 ### Downloading Pretrained Models
 ##### fastText
 1. Download [fastText English vectors](https://fasttext.cc/docs/en/crawl-vectors.html) [[direct link](https://dl.fbaipublicfiles.com/fasttext/vectors-crawl/cc.en.300.bin.gz)]
-2. Decompress and put `cc.en.300.bin` inside `model/pretrained/fastText`directory
+2. Decompress and put `cc.en.300.bin` under `model/pretrained/fastText`directory
 
 ##### GloVe
 1. Download [spaCy pretrained GloVe model](https://spacy.io/models/en#en_vectors_web_lg) [[direct link](https://github.com/explosion/spacy-models/releases/download/en_vectors_web_lg-2.1.0/en_vectors_web_lg-2.1.0.tar.gz)]
