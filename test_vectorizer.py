@@ -15,7 +15,7 @@ if __name__ == '__main__':
         "How much does an organisation need to pay to register as an Approved Institution (AI) with "
         "Ministry of Social and Family Development (MSF)?",
         ]
-    vectorizers = [FTVectorizer(), GloveVectorizer, USEVectorizer()]
+    vectorizers = [FTVectorizer(), GloveVectorizer(), USEVectorizer()]
 
     for i, sentence in enumerate(sentences):
         print("=" * 80)
