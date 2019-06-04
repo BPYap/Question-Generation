@@ -1,6 +1,6 @@
-from src.vectorizer.fast_text import FTVectorizer
-from src.vectorizer.glove import GloveVectorizer
-from src.vectorizer.universal_sentence_encoder import USEVectorizer
+from src.sentence_vectorizer.fast_text import FTVectorizer
+from src.sentence_vectorizer.glove import GloveVectorizer
+from src.sentence_vectorizer.universal_sentence_encoder import USEVectorizer
 
 
 if __name__ == '__main__':
@@ -15,7 +15,8 @@ if __name__ == '__main__':
         "How much does an organisation need to pay to register as an Approved Institution (AI) with "
         "Ministry of Social and Family Development (MSF)?",
         ]
-    vectorizers = [FTVectorizer(), GloveVectorizer(), USEVectorizer()]
+    # vectorizers = [FTVectorizer(), GloveVectorizer(), USEVectorizer()]
+    vectorizers = [GloveVectorizer()]
 
     for i, sentence in enumerate(sentences):
         print("=" * 80)
@@ -25,3 +26,12 @@ if __name__ == '__main__':
             vector = vectorizer.get_vector(sentence)
             print("Vector: [{}, ...]".format(", ".join(str(x) for x in vector[:3])))
             print("Vector dimensions: {}\n".format(len(vector)))
+
+    for vectorizer in vectorizers:
+        print("Getting vectors from {}...".format(vectorizer.name))
+        vectors = vectorizer.get_vectors(sentences)
+        print("[")
+        for vector in vectors:
+            print(" [{}, ...]".format(", ".join(str(x) for x in vector[:3])))
+        print("]")
+        print("Vectors dimensions: {}\n".format(vectors.shape))

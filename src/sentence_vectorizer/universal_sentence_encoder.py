@@ -18,9 +18,12 @@ class USEVectorizer(BaseVectorizer):
                 vectorize = model(sentence_placeholder)
                 session = tf.train.MonitoredSession()
 
-            return lambda sentence: np.array(session.run(vectorize, {sentence_placeholder: [sentence]}))
+            return lambda sentences: np.array(session.run(vectorize, {sentence_placeholder: sentences}))
 
         self.vectorize = init()
 
     def get_vector(self, sentence):
-        return self.vectorize(sentence)[0]
+        return self.get_vectors([sentence])[0]
+
+    def get_vectors(self, sentences):
+        return self.vectorize(sentences)
