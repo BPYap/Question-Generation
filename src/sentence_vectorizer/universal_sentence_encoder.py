@@ -8,7 +8,7 @@ from ..config import PRETRAINED_DIR
 
 class USEVectorizer(BaseVectorizer):
     def __init__(self):
-        super().__init__("Universal Sentence Encoder", PRETRAINED_DIR + "universal_sentence_encoder")
+        super().__init__("Universal Sentence Encoder", 512, PRETRAINED_DIR + "universal_sentence_encoder")
 
         def init():
             tf.logging.set_verbosity(tf.logging.ERROR)

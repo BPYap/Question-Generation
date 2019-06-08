@@ -2,8 +2,9 @@ import numpy as np
 
 
 class BaseVectorizer:
-    def __init__(self, name, model_path):
+    def __init__(self, name, dimension, model_path):
         self.name = name
+        self.dimension = dimension
         self.model_path = model_path
 
     def get_vector(self, sentence):

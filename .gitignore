@@ -1,5 +1,6 @@
 .idea/
 env/
 lib/
+data/
 model/pretrained/
 *.pyc
