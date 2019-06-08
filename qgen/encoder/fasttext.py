@@ -1,10 +1,10 @@
 import fastText
 
-from .base import BaseVectorizer
+from .base import BaseEncoder
 from ..config import PRETRAINED_DIR
 
 
-class FTVectorizer(BaseVectorizer):
+class FTEncoder(BaseEncoder):
     def __init__(self):
         super().__init__("fastText", 300, PRETRAINED_DIR + "fastText/cc.en.300.bin")
 

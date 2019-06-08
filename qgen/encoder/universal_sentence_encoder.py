@@ -2,11 +2,11 @@ import numpy as np
 import tensorflow as tf
 import tensorflow_hub as hub
 
-from .base import BaseVectorizer
+from .base import BaseEncoder
 from ..config import PRETRAINED_DIR
 
 
-class USEVectorizer(BaseVectorizer):
+class USEEncoder(BaseEncoder):
     def __init__(self):
         super().__init__("Universal Sentence Encoder", 512, PRETRAINED_DIR + "universal_sentence_encoder")
 
@@ -15,15 +15,15 @@ class USEVectorizer(BaseVectorizer):
             with tf.Graph().as_default():
                 sentence_placeholder = tf.placeholder(tf.string)
                 model = hub.Module(self.model_path)
-                vectorize = model(sentence_placeholder)
+                encode_sentence = model(sentence_placeholder)
                 session = tf.train.MonitoredSession()
 
-            return lambda sentences: np.array(session.run(vectorize, {sentence_placeholder: sentences}))
+            return lambda sentences: np.array(session.run(encode_sentence, {sentence_placeholder: sentences}))
 
-        self.vectorize = init()
+        self.encode_sentences = init()
 
     def get_vector(self, sentence):
         return self.get_vectors([sentence])[0]
 
     def get_vectors(self, sentences):
-        return self.vectorize(sentences)
+        return self.encode_sentences(sentences)

@@ -1,10 +1,10 @@
 import spacy
 
-from .base import BaseVectorizer
+from .base import BaseEncoder
 from ..config import PRETRAINED_DIR
 
 
-class GloveVectorizer(BaseVectorizer):
+class GloveEncoder(BaseEncoder):
     def __init__(self):
         super().__init__("Average GloVe", 300, PRETRAINED_DIR + "spacy_glove/en_vectors_web_lg-2.1.0")
 

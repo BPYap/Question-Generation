@@ -1,7 +1,7 @@
 import numpy as np
 
 
-class BaseVectorizer:
+class BaseEncoder:
     def __init__(self, name, dimension, model_path):
         self.name = name
         self.dimension = dimension
