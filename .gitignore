@@ -3,4 +3,5 @@ env/
 lib/
 data/
 model/pretrained/
+OpenNMT-py/
 *.pyc
