@@ -3,12 +3,11 @@ import tensorflow as tf
 import tensorflow_hub as hub
 
 from .base import BaseEncoder
-from ..config import PRETRAINED_DIR
 
 
 class USEEncoder(BaseEncoder):
-    def __init__(self):
-        super().__init__("Universal Sentence Encoder", 512, PRETRAINED_DIR + "universal_sentence_encoder")
+    def __init__(self, model_path):
+        super().__init__("Universal Sentence Encoder", 512, model_path)
 
         def init():
             tf.logging.set_verbosity(tf.logging.ERROR)

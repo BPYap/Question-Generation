@@ -1,12 +1,11 @@
 import fastText
 
 from .base import BaseEncoder
-from ..config import PRETRAINED_DIR
 
 
 class FTEncoder(BaseEncoder):
-    def __init__(self):
-        super().__init__("fastText", 300, PRETRAINED_DIR + "fastText/cc.en.300.bin")
+    def __init__(self, model_path):
+        super().__init__("fastText", 300, model_path)
 
         self.model = fastText.load_model(self.model_path)
 

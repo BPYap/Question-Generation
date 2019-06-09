@@ -1,6 +1,7 @@
 from qgen.encoder.fasttext import FTEncoder
 from qgen.encoder.glove import GloveEncoder
 from qgen.encoder.universal_sentence_encoder import USEEncoder
+from script.config import FASTTEXT_MODEL_PATH, GLOVE_MODEL_PATH, USE_MODEL_PATH
 
 
 if __name__ == '__main__':
@@ -15,8 +16,7 @@ if __name__ == '__main__':
         "How much does an organisation need to pay to register as an Approved Institution (AI) with "
         "Ministry of Social and Family Development (MSF)?",
         ]
-    # encoders = [FTEncoder(), GloveEncoder(), USEEncoder()]
-    encoders = [USEEncoder()]
+    encoders = [FTEncoder(FASTTEXT_MODEL_PATH), GloveEncoder(GLOVE_MODEL_PATH), USEEncoder(USE_MODEL_PATH)]
 
     for i, sentence in enumerate(sentences):
         print("=" * 80)
