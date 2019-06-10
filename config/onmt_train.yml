@@ -1,0 +1,4 @@
+data: data/onmt_data
+save_model: model/test_model
+
+train_steps: 500

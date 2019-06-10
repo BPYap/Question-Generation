@@ -1,10 +1,15 @@
 from qgen.encoder.fasttext import FTEncoder
 from qgen.encoder.glove import GloveEncoder
 from qgen.encoder.universal_sentence_encoder import USEEncoder
-from script.config import FASTTEXT_MODEL_PATH, GLOVE_MODEL_PATH, USE_MODEL_PATH
+from qgen.util.config import load_yaml_config
 
 
 if __name__ == '__main__':
+    yaml_config = load_yaml_config()
+    fasttext_path = yaml_config['fasttext_model_path']
+    glove_path = yaml_config['glove_model_path']
+    use_path = yaml_config['use_model_path']
+
     sentences = [
         "How can my organisation apply to be a Baby Bonus Approved Institution?",
         "I have entered the Unique Entity Number (UEN) using 'Join as an Approved Institution (AI)' service, "
@@ -16,7 +21,7 @@ if __name__ == '__main__':
         "How much does an organisation need to pay to register as an Approved Institution (AI) with "
         "Ministry of Social and Family Development (MSF)?",
         ]
-    encoders = [FTEncoder(FASTTEXT_MODEL_PATH), GloveEncoder(GLOVE_MODEL_PATH), USEEncoder(USE_MODEL_PATH)]
+    encoders = [FTEncoder(fasttext_path), GloveEncoder(glove_path), USEEncoder(use_path)]
 
     for i, sentence in enumerate(sentences):
         print("=" * 80)

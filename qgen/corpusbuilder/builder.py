@@ -4,10 +4,18 @@ from tqdm import tqdm
 
 
 class Builder:
-    def __init__(self, src_path, dest_path, output_path):
+    def __init__(self, src_path, tgt_path, src_output_path, tgt_output_path):
+        """ Initialize parallel corpus builder
+
+        :param src_path: path to corpus containing questions of particular style/tone in random order
+        :param tgt_path: path to corpus containing questions of another style/tone in random order
+        :param src_output_path: output path to parallel corpus generated from corpus in `src_path`
+        :param tgt_output_path: output path to parallel corpus generated from corpus in `tgt_path`
+        """
         self.src_sentences = self._read_file(src_path)
-        self.dest_sentences = self._read_file(dest_path)
-        self.output_path = output_path
+        self.tgt_sentences = self._read_file(tgt_path)
+        self.src_output_path = src_output_path
+        self.tgt_output_path = tgt_output_path
 
         self.encoder = None
 
@@ -15,22 +23,31 @@ class Builder:
         self.encoder = encoder
 
     def generate_parallel_corpus(self):
+        """ Generate pseudo-parallel corpus based on cosine distances between source corpus and target corpus.
+        Results will be saved into 2 different files (`self.src_output_path` and `self.tgt_output_path`) in which
+        a line in `self.src_output_path` is "parallel"/"translated" to the same line in `self.tgt_output_path`.
+        """
         print("Initializing...")
-        dest_vectors = self.encoder.get_vectors(self.dest_sentences)
+        tgt_vectors = self.encoder.get_vectors(self.tgt_sentences)
 
         print("Generating parallel corpus...")
-        parallel_corpus = dict()
+        src_sentences = []
+        tgt_sentences = []
         for src_sentence in tqdm(self.src_sentences):
-            parallel_corpus[src_sentence] = self._get_most_similar_dest(src_sentence, dest_vectors)
+            src_sentences.append(src_sentence)
+            tgt_sentences.append(self._get_most_similar_tgt(src_sentence, tgt_vectors))
 
-        self._write_file(self.output_path, parallel_corpus)
+        assert len(src_sentences) == len(tgt_sentences)
 
-    def _get_most_similar_dest(self, sentence, dest_vectors):
+        self._write_file(src_sentences, self.src_output_path)
+        self._write_file(tgt_sentences, self.tgt_output_path)
+
+    def _get_most_similar_tgt(self, sentence, tgt_vectors):
         vector = self.encoder.get_vector(sentence)
-        distances = distance.cdist(np.reshape(vector, (1, -1)), dest_vectors, 'cosine')[0]
+        distances = distance.cdist(np.reshape(vector, (1, -1)), tgt_vectors, 'cosine')[0]
         most_similar_index = np.argmin(distances)
 
-        return self.dest_sentences[most_similar_index]
+        return self.tgt_sentences[most_similar_index]
 
     @staticmethod
     def _read_file(path):
@@ -48,8 +65,8 @@ class Builder:
         return list(sentences)
 
     @staticmethod
-    def _write_file(path, parallel_corpus):
-        print(f"Writing {len(parallel_corpus)} lines to {path}")
+    def _write_file(lines, path):
+        print(f"Writing {len(lines)} lines to {path}...")
         with open(path, "w", encoding='utf-8') as f:
-            for src_sentence, dest_sentence in tqdm(parallel_corpus.items()):
-                f.write(f"{src_sentence}|||{dest_sentence}\n")
+            for line in lines:
+                f.write(f"{line}\n")

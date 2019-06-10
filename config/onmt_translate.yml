@@ -1,0 +1,6 @@
+model: model/test_model_step_500.pt
+src: data/source-test.txt
+output: data/target-predicted.txt
+
+replace_unk: 'true'
+verbose: 'true'

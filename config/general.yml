@@ -1,0 +1,12 @@
+model_dir: model/
+
+fasttext_model_path: model/pretrained/fastText/cc.en.300.bin
+glove_model_path: model/pretrained/spacy_glove/en_vectors_web_lg-2.1.0
+use_model_path: model/pretrained/universal_sentence_encoder
+
+data_dir: data/
+
+source_corpus_path: data/source.txt
+target_corpus_path: data/target.txt
+source_parallel_corpus_path: data/source_parallel.txt
+target_parallel_corpus_path: data/target_parallel.txt

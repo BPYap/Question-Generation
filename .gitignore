@@ -1,7 +1,9 @@
 .idea/
 env/
 lib/
+dist/
+*.egg-info/
 data/
-model/pretrained/
+model/
 OpenNMT-py/
 *.pyc

@@ -1,0 +1,7 @@
+train_src: data/source-train.txt
+train_tgt: data/target-train.txt
+
+valid_src: data/source-validation.txt
+valid_tgt: data/target-validation.txt
+
+save_data: data/onmt_data
