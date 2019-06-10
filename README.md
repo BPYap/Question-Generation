@@ -20,6 +20,7 @@ source env/bin/activate
 ### Step 3: Install dependencies
 ```
 pip install -r requirements.txt
+python setup.py install
 ```
 ### Step 4: Download pretrained models
 ##### fastText
