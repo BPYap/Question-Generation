@@ -1,6 +1,6 @@
 .idea/
 env/
-lib/
+build/
 dist/
 *.egg-info/
 data/

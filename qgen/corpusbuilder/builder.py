@@ -2,6 +2,8 @@ import numpy as np
 from scipy.spatial import distance
 from tqdm import tqdm
 
+from ..util import file
+
 
 class Builder:
     def __init__(self, src_path, tgt_path, src_output_path, tgt_output_path):
@@ -12,8 +14,8 @@ class Builder:
         :param src_output_path: output path to parallel corpus generated from corpus in `src_path`
         :param tgt_output_path: output path to parallel corpus generated from corpus in `tgt_path`
         """
-        self.src_sentences = self._read_file(src_path)
-        self.tgt_sentences = self._read_file(tgt_path)
+        self.src_sentences = self._read_unique_lines(src_path)
+        self.tgt_sentences = self._read_unique_lines(tgt_path)
         self.src_output_path = src_output_path
         self.tgt_output_path = tgt_output_path
 
@@ -22,7 +24,7 @@ class Builder:
     def set_encoder(self, encoder):
         self.encoder = encoder
 
-    def generate_parallel_corpus(self):
+    def build_parallel_corpus(self):
         """ Generate pseudo-parallel corpus based on cosine distances between source corpus and target corpus.
         Results will be saved into 2 different files (`self.src_output_path` and `self.tgt_output_path`) in which
         a line in `self.src_output_path` is "parallel"/"translated" to the same line in `self.tgt_output_path`.
@@ -39,8 +41,8 @@ class Builder:
 
         assert len(src_sentences) == len(tgt_sentences)
 
-        self._write_file(src_sentences, self.src_output_path)
-        self._write_file(tgt_sentences, self.tgt_output_path)
+        file.write_file(src_sentences, self.src_output_path)
+        file.write_file(tgt_sentences, self.tgt_output_path)
 
     def _get_most_similar_tgt(self, sentence, tgt_vectors):
         vector = self.encoder.get_vector(sentence)
@@ -50,23 +52,16 @@ class Builder:
         return self.tgt_sentences[most_similar_index]
 
     @staticmethod
-    def _read_file(path):
+    def _read_unique_lines(path):
         print(f"Reading from {path}...")
-        sentences = set()
+        lines = set()
         with open(path, 'r', encoding='utf-8') as f:
             for line in iter(f.readline, ''):
                 line = line.strip()
-                if len(line) == 0 or line in sentences:
+                if len(line) == 0 or line in lines:
                     continue
                 else:
-                    sentences.add(line)
+                    lines.add(line)
 
-        print(f"Successfully read {len(sentences)} sentences from {path}")
-        return list(sentences)
-
-    @staticmethod
-    def _write_file(lines, path):
-        print(f"Writing {len(lines)} lines to {path}...")
-        with open(path, "w", encoding='utf-8') as f:
-            for line in lines:
-                f.write(f"{line}\n")
+        print(f"Successfully read {len(lines)} unique lines from {path}")
+        return list(lines)
