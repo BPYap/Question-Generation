@@ -1,0 +1,211 @@
+# Path configurations
+parallel-src: data/mydata-source.txt
+parallel-tgt: data/mydata-target.txt
+parallel-parallel_src: &parallel_src data/mydata-source_parallel.txt
+parallel-parallel_tgt: &parallel_tgt data/mydata-target_parallel.txt
+
+prepare-input_src: *parallel_src
+prepare-input_tgt: *parallel_tgt
+prepare-train_src: &train_src data/mydata-source_train.txt
+prepare-train_tgt: &train_tgt data/mydata-target_train.txt
+prepare-valid_src: &valid_src data/mydata-source_validation.txt
+prepare-valid_tgt: &valid_tgt data/mydata-target_validation.txt
+prepare-test_src: &test_src data/mydata-source_test.txt
+prepare-test_tgt: data/mydata-target_test.txt
+
+onmt-preprocess-train_src: *train_src
+onmt-preprocess-train_tgt: *train_tgt
+onmt-preprocess-valid_src: *valid_src
+onmt-preprocess-valid_tgt: *valid_tgt
+onmt-preprocess-save_data: &data data/mydata-onmt_data
+
+onmt-train-data: *data
+onmt-train-save_model: model/mydata-onmt_model
+
+onmt-translate-model: model/mydata-onmt_model_step_300.pt
+onmt-translate-src: *test_src
+onmt-translate-output: data/mydata-target_predicted.txt
+
+# build_parallel.py configurations
+parallel-encoder: use # choose between {fasttext, glove, use}
+
+# prepare_dataset.py configurations
+prepare-validation_ratio: 0.2
+prepare-test_ratio: 0.2
+
+# OpenNMT preprocess.py configurations
+# For more information: http://opennmt.net/OpenNMT-py/options/preprocess.html
+onmt-preprocess-data_type: text # choose between {text, img, audio}
+onmt-preprocess-train_ids: []
+onmt-preprocess-src_dir: ''
+onmt-preprocess-shard_size: 1000000
+onmt-preprocess-src_vocab: ''
+onmt-preprocess-tgt_vocab: ''
+onmt-preprocess-features_vocabs_prefix: ''
+onmt-preprocess-src_vocab_size: 50000
+onmt-preprocess-tgt_vocab_size: 50000
+onmt-preprocess-vocab_size_multiple: 1
+onmt-preprocess-src_words_min_frequency: 0
+onmt-preprocess-tgt_words_min_frequency: 0
+onmt-preprocess-dynamic_dict: 'false'
+onmt-preprocess-share_vocab: 'false'
+onmt-preprocess-src_seq_length: 50
+onmt-preprocess-tgt_seq_length: 50
+onmt-preprocess-lower: 'false'
+onmt-preprocess-filter_valid: 'false'
+onmt-preprocess-shuffle: 0
+onmt-preprocess-seed: 3435
+onmt-preprocess-report_every: 100000
+onmt-preprocess-log_file: ''
+onmt-preprocess-log_file_level: 0 # choose between {CRITICAL, NOTSET, WARNING, INFO, ERROR, DEBUG, 50, 0, 30, 20, 40, 10}
+onmt-preprocess-sample_rate: 16000
+onmt-preprocess-window_size: 0.02
+onmt-preprocess-window_stride: 0.01
+onmt-preprocess-window: hamming
+onmt-preprocess-image_channel_size: 3 # choose between {3, 1}
+
+# OpenNMT train.py configurations
+# For more information: http://opennmt.net/OpenNMT-py/options/train.html
+onmt-train-src_word_vec_size: 500
+onmt-train-tgt_word_vec_size: 500
+onmt-train-word_vec_size: -1
+onmt-train-share_decoder_embeddings: 'false'
+onmt-train-share_embeddings: 'false'
+onmt-train-position_encoding: 'false'
+onmt-train-feat_merge: concat # choose between {concat, sum, mlp}
+onmt-train-feat_vec_size: -1
+onmt-train-feat_vec_exponent: 0.7
+onmt-train-model_type: text # choose between {text, img, audio}
+onmt-train-model_dtype: fp32 # choose between {fp32, fp16}
+onmt-train-encoder_type: rnn # choose between {rnn, brnn, mean, transformer, cnn}
+onmt-train-decoder_type: rnn # choose between {rnn, transformer, cnn}
+onmt-train-layers: -1
+onmt-train-enc_layers: 2
+onmt-train-dec_layers: 2
+onmt-train-rnn_size: -1
+onmt-train-enc_rnn_size: 500
+onmt-train-dec_rnn_size: 500
+onmt-train-audio_enc_pooling: 1
+onmt-train-cnn_kernel_width: 3
+onmt-train-input_feed: 1
+onmt-train-bridge: 'false'
+onmt-train-rnn_type: LSTM # choose between {LSTM, GRU, SRU}
+onmt-train-context_gate: 'none' # choose between {source, target, both, none}
+onmt-train-global_attention: general # choose between {dot, general, mlp, none}
+onmt-train-global_attention_function: softmax # choose between {softmax, sparsemax}
+onmt-train-self_attn_type: scaled-dot #choose between {scaled-dot, average}
+onmt-train-max_relative_positions: 0
+onmt-train-heads: 8
+onmt-train-transformer_ff: 2048
+onmt-train--copy_attn: 'false'
+onmt-train-copy_attn_type: 'none' # choose between {dot, general, mlp, none}
+onmt-train-generator_function: softmax # choose between {softmax, sparsemax}
+onmt-train-copy_attn_force: 'false'
+onmt-train-reuse_copy_attn: 'false'
+onmt-train-copy_loss_by_seqlength: 'false'
+onmt-train-coverage_attn: 'false'
+onmt-train-lambda_coverage: 1
+onmt-train-loss_scale: 0
+onmt-train-data_ids: []
+onmt-train-data_weights: [1]
+onmt-train-save_checkpoint_steps: 5000
+onmt-train-keep_checkpoint: -1
+onmt-train-gpu_ranks: []
+onmt-train-world_size: 1
+onmt-train-gpu_backend: nccl
+onmt-train-gpu_verbose_level: 0
+onmt-train-master_ip: localhost
+onmt-train-master_port: 10000
+onmt-train-queue_size: 400
+onmt-train-seed: -1
+onmt-train-param_init: 0.1
+onmt-train-param_init_glorot: 'false'
+onmt-train-train_from: ''
+onmt-train-reset_optim: 'none' # choose between {none, all, states, keep_states}
+onmt-train-pre_word_vecs_enc: 'none'
+onmt-train-pre_word_vecs_dec: 'none'
+onmt-train-fix_word_vecs_enc: 'false'
+onmt-train-fix_word_vecs_dec: 'false'
+onmt-train-batch_size: 64
+onmt-train-batch_type: sents # choose between {sents, tokens}
+onmt-train-pool_factor: 8192
+onmt-train-normalization: sents # choose between {sents, tokens}
+onmt-train-accum_count: [1]
+onmt-train-accum_steps: [0]
+onmt-train-valid_steps: 10000
+onmt-train-valid_batch_size: 32
+onmt-train-max_generator_batches: 32
+onmt-train-train_steps: 300
+onmt-train-single_pass: 'false'
+onmt-train-epochs: 0
+onmt-train-early_stopping: 0
+onmt-train-early_stopping_criteria: 'none'
+onmt-train-optim: sgd # choose between {sgd, adagrad, adadelta, adam, sparseadam, adafactor, fusedadam}
+onmt-train-adagrad_accumulator_init: 0
+onmt-train-max_grad_norm: 5
+onmt-train-dropout: [0.3]
+onmt-train-dropout_steps: [0]
+onmt-train-truncated_decoder: 0
+onmt-train-adam_beta1: 0.9
+onmt-train-adam_beta2: 0.999
+onmt-train-label_smoothing: 0.0
+onmt-train-average_decay: 0
+onmt-train-average_every: 1
+onmt-train-learning_rate: 1.0
+onmt-train-learning_rate_decay: 0.5
+onmt-train-start_decay_steps: 50000
+onmt-train-decay_steps: 10000
+onmt-train-decay_method: 'none' # choose between {noam, noamwd, rsqrt, none}
+onmt-train-warmup_steps: 4000
+onmt-train-report_every: 50
+onmt-train-log_file: ''
+onmt-train-log_file_level: 0 # choose between {CRITICAL, NOTSET, WARNING, INFO, ERROR, DEBUG, 50, 0, 30, 20, 40, 10}
+onmt-train-exp_host: ''
+onmt-train-exp: ''
+onmt-train-tensorboard: 'false'
+onmt-train-tensorboard_log_dir: runs/onmt
+onmt-train-sample_rate: 16000
+onmt-train-window_size: 0.02
+onmt-train-image_channel_size: 3 # choose between {3, 1}
+
+# OpenNMT translate.py configurations
+onmt-translate-fp32: 'false'
+onmt-translate-avg_raw_probs: 'false'
+onmt-translate-data_type: text # choose between {text, img, audio}
+onmt-translate-src_dir: ''
+onmt-translate-tgt: 'none'
+onmt-translate-shard_size: 10000
+onmt-translate-report_bleu: 'false'
+onmt-translate-report_rouge: 'false'
+onmt-translate-report_time: 'false'
+onmt-translate-dynamic_dict: 'false'
+onmt-translate-share_vocab: 'false'
+onmt-translate-random_sampling_topk: 1
+onmt-translate-random_sampling_temp: 1.0
+onmt-translate-seed: 829
+onmt-translate-beam_size: 5
+onmt-translate-min_length: 0
+onmt-translate-max_length: 100
+onmt-translate-stepwise_penalty: 'false'
+onmt-translate-length_penalty: 'none' # choose from {none, wu, avg}
+onmt-translate-ratio: -0.0
+onmt-translate-coverage_penalty: 'none' # choose from {none, wu, avg}
+onmt-translate-alpha: 0.0
+onmt-translate-beta: -0.0
+onmt-translate-block_ngram_repeat: 0
+onmt-translate-ignore_when_blocking: []
+onmt-translate-replace_unk: 'true'
+onmt-translate-phrase_table: ''
+onmt-translate-verbose: 'true'
+onmt-translate-log_file: ''
+onmt-translate-log_file_level: 0 # choose between {CRITICAL, NOTSET, WARNING, INFO, ERROR, DEBUG, 50, 0, 30, 20, 40, 10}
+onmt-translate-attn_debug: 'false'
+onmt-translate-dump_beam: ''
+onmt-translate-n_best: 1
+onmt-translate-batch_size: 30
+onmt-translate-gpu: -1
+onmt-translate-sample_rate: 16000
+onmt-translate-window_size: 0.02
+onmt-translate-window_stride: 0.01
+onmt-translate-window: hamming
+onmt-translate-image_channel_size: 3 # choose between {3, 1}
