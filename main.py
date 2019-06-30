@@ -30,7 +30,7 @@ def _run_python(script, arguments):
 
 
 if __name__ == '__main__':
-    valid_scripts = ['build_parallel', 'prepare_dataset', 'preprocess', 'train', 'translate', 'all']
+    valid_scripts = ['build_parallel', 'prepare_dataset', 'preprocess', 'train', 'translate', 'format', 'all']
     parser = argparse.ArgumentParser()
     parser.add_argument("config", help="Configuration file (.yml) for all scripts")
     parser.add_argument("--script", "-s", default='all',
@@ -56,3 +56,6 @@ if __name__ == '__main__':
 
     if args.script == 'all' or args.script == 'translate':
         _run_python("OpenNMT-py/translate.py", _filter_args(configs, 'onmt-translate'))
+
+    if args.script == 'all' or args.script == 'format':
+        _run_python("script/format_output.py", _filter_args(configs, 'format'))
