@@ -53,8 +53,8 @@ python main.py [--script SCRIPT] config_file_path
 ##### Description 
 Build pseudo-parallel corpus from 2 unaligned corpus. 
 ##### Configuration
- - `src`: Path to unaligned source corpus (input)
- - `tgt`: Path to unaligned target corpus (input)
+ - `src`: Path to unaligned corpus (source)
+ - `tgt`: Path to unaligned corpus (target)
  - `encoder`: Sentence encoder. Choose between `fasttext`, `glove` or `use` (Universal Sentence Encoder)
  - `parallel_src`: Path where the generated pseudo-parallel corpus (source) will be saved
  - `parallel_tgt`: Path where the generated pseudo-parallel corpus (target) will be saved
@@ -63,8 +63,8 @@ Build pseudo-parallel corpus from 2 unaligned corpus.
 ##### Description 
 Split dataset into train, test, validation set for `preprocess` script. 
 ##### Configuration
- - `input_src`: Path to pseudo-parallel source corpus
- - `input_tgt`: Path to pseudo-parallel target corpus
+ - `input_src`: Path to pseudo-parallel corpus (source)
+ - `input_tgt`: Path to pseudo-parallel corpus (target)
  - `train_src`: Path where the training set (source) will be saved
  - `train_tgt`: Path where the training set (target) will be saved
  - `valid_src`: Path where the validation set (source) will be saved
