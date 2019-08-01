@@ -1,211 +1,219 @@
 # Path configurations
-parallel-src: data/mydata-source.txt
-parallel-tgt: data/mydata-target.txt
-parallel-parallel_src: &parallel_src data/mydata-source_parallel.txt
-parallel-parallel_tgt: &parallel_tgt data/mydata-target_parallel.txt
+build_parallel-src: data/input/sample/source.txt
+build_parallel-tgt: data/input/sample/target.txt
+build_parallel-parallel_src: &parallel_src data/output/sample/source_parallel.txt
+build_parallel-parallel_tgt: &parallel_tgt data/output/sample/target_parallel.txt
 
-prepare-input_src: *parallel_src
-prepare-input_tgt: *parallel_tgt
-prepare-train_src: &train_src data/mydata-source_train.txt
-prepare-train_tgt: &train_tgt data/mydata-target_train.txt
-prepare-valid_src: &valid_src data/mydata-source_validation.txt
-prepare-valid_tgt: &valid_tgt data/mydata-target_validation.txt
-prepare-test_src: &test_src data/mydata-source_test.txt
-prepare-test_tgt: data/mydata-target_test.txt
+prepare_dataset-input_src: *parallel_src
+prepare_dataset-input_tgt: *parallel_tgt
+prepare_dataset-train_src: &train_src data/output/sample/sample-source_train.txt
+prepare_dataset-train_tgt: &train_tgt data/output/sample/target_train.txt
+prepare_dataset-valid_src: &valid_src data/output/sample/source_validation.txt
+prepare_dataset-valid_tgt: &valid_tgt data/output/sample/target_validation.txt
+prepare_dataset-test_src: &test_src data/output/sample/source_test.txt
+prepare_dataset-test_tgt: data/output/sample/target_test.txt
 
-onmt-preprocess-train_src: *train_src
-onmt-preprocess-train_tgt: *train_tgt
-onmt-preprocess-valid_src: *valid_src
-onmt-preprocess-valid_tgt: *valid_tgt
-onmt-preprocess-save_data: &data data/mydata-onmt_data
+preprocess-train_src: *train_src
+preprocess-train_tgt: *train_tgt
+preprocess-valid_src: *valid_src
+preprocess-valid_tgt: *valid_tgt
+preprocess-save_data: &data data/output/sample/onmt_data
 
-onmt-train-data: *data
-onmt-train-save_model: model/mydata-onmt_model
+train-data: *data
+train-save_model: model/sample-onmt_model
 
-onmt-translate-model: model/mydata-onmt_model_step_300.pt
-onmt-translate-src: *test_src
-onmt-translate-output: data/mydata-target_predicted.txt
+translate-model: model/sample-onmt_model_step_300.pt
+translate-src: *test_src
+translate-output: &predicted_tgt data/output/sample/target_predicted.txt
+
+format_output-src: *test_src
+format_output-tgt: *predicted_tgt
+format_output-output: data/output/sample/formatted.json
 
 # build_parallel.py configurations
-parallel-encoder: use # choose between {fasttext, glove, use}
+build_parallel-encoder: use # choose between {fasttext, glove, use}
 
 # prepare_dataset.py configurations
-prepare-validation_ratio: 0.2
-prepare-test_ratio: 0.2
+prepare_dataset-validation_ratio: 0.2
+prepare_dataset-test_ratio: 0.2
 
 # OpenNMT preprocess.py configurations
-# For more information: http://opennmt.net/OpenNMT-py/options/preprocess.html
-onmt-preprocess-data_type: text # choose between {text, img, audio}
-onmt-preprocess-train_ids: []
-onmt-preprocess-src_dir: ''
-onmt-preprocess-shard_size: 1000000
-onmt-preprocess-src_vocab: ''
-onmt-preprocess-tgt_vocab: ''
-onmt-preprocess-features_vocabs_prefix: ''
-onmt-preprocess-src_vocab_size: 50000
-onmt-preprocess-tgt_vocab_size: 50000
-onmt-preprocess-vocab_size_multiple: 1
-onmt-preprocess-src_words_min_frequency: 0
-onmt-preprocess-tgt_words_min_frequency: 0
-onmt-preprocess-dynamic_dict: 'false'
-onmt-preprocess-share_vocab: 'false'
-onmt-preprocess-src_seq_length: 50
-onmt-preprocess-tgt_seq_length: 50
-onmt-preprocess-lower: 'false'
-onmt-preprocess-filter_valid: 'false'
-onmt-preprocess-shuffle: 0
-onmt-preprocess-seed: 3435
-onmt-preprocess-report_every: 100000
-onmt-preprocess-log_file: ''
-onmt-preprocess-log_file_level: 0 # choose between {CRITICAL, NOTSET, WARNING, INFO, ERROR, DEBUG, 50, 0, 30, 20, 40, 10}
-onmt-preprocess-sample_rate: 16000
-onmt-preprocess-window_size: 0.02
-onmt-preprocess-window_stride: 0.01
-onmt-preprocess-window: hamming
-onmt-preprocess-image_channel_size: 3 # choose between {3, 1}
+  # For more information: http://opennmt.net/OpenNMT-py/options/preprocess.html
+preprocess-data_type: text # choose between {text, img, audio}
+preprocess-train_ids: []
+preprocess-src_dir: ''
+preprocess-shard_size: 1000000
+preprocess-src_vocab: ''
+preprocess-tgt_vocab: ''
+preprocess-features_vocabs_prefix: ''
+preprocess-src_vocab_size: 50000
+preprocess-tgt_vocab_size: 50000
+preprocess-vocab_size_multiple: 1
+preprocess-src_words_min_frequency: 0
+preprocess-tgt_words_min_frequency: 0
+preprocess-dynamic_dict: 'false'
+preprocess-share_vocab: 'false'
+preprocess-src_seq_length: 50
+preprocess-tgt_seq_length: 50
+preprocess-lower: 'false'
+preprocess-filter_valid: 'false'
+preprocess-shuffle: 0
+preprocess-seed: 3435
+preprocess-report_every: 100000
+preprocess-log_file: ''
+preprocess-log_file_level: 0 # choose between {CRITICAL, NOTSET, WARNING, INFO, ERROR, DEBUG, 50, 0, 30, 20, 40, 10}
+preprocess-sample_rate: 16000
+preprocess-window_size: 0.02
+preprocess-window_stride: 0.01
+preprocess-window: hamming
+preprocess-image_channel_size: 3 # choose between {3, 1}
 
 # OpenNMT train.py configurations
 # For more information: http://opennmt.net/OpenNMT-py/options/train.html
-onmt-train-src_word_vec_size: 500
-onmt-train-tgt_word_vec_size: 500
-onmt-train-word_vec_size: -1
-onmt-train-share_decoder_embeddings: 'false'
-onmt-train-share_embeddings: 'false'
-onmt-train-position_encoding: 'false'
-onmt-train-feat_merge: concat # choose between {concat, sum, mlp}
-onmt-train-feat_vec_size: -1
-onmt-train-feat_vec_exponent: 0.7
-onmt-train-model_type: text # choose between {text, img, audio}
-onmt-train-model_dtype: fp32 # choose between {fp32, fp16}
-onmt-train-encoder_type: rnn # choose between {rnn, brnn, mean, transformer, cnn}
-onmt-train-decoder_type: rnn # choose between {rnn, transformer, cnn}
-onmt-train-layers: -1
-onmt-train-enc_layers: 2
-onmt-train-dec_layers: 2
-onmt-train-rnn_size: -1
-onmt-train-enc_rnn_size: 500
-onmt-train-dec_rnn_size: 500
-onmt-train-audio_enc_pooling: 1
-onmt-train-cnn_kernel_width: 3
-onmt-train-input_feed: 1
-onmt-train-bridge: 'false'
-onmt-train-rnn_type: LSTM # choose between {LSTM, GRU, SRU}
-onmt-train-context_gate: 'none' # choose between {source, target, both, none}
-onmt-train-global_attention: general # choose between {dot, general, mlp, none}
-onmt-train-global_attention_function: softmax # choose between {softmax, sparsemax}
-onmt-train-self_attn_type: scaled-dot #choose between {scaled-dot, average}
-onmt-train-max_relative_positions: 0
-onmt-train-heads: 8
-onmt-train-transformer_ff: 2048
-onmt-train--copy_attn: 'false'
-onmt-train-copy_attn_type: 'none' # choose between {dot, general, mlp, none}
-onmt-train-generator_function: softmax # choose between {softmax, sparsemax}
-onmt-train-copy_attn_force: 'false'
-onmt-train-reuse_copy_attn: 'false'
-onmt-train-copy_loss_by_seqlength: 'false'
-onmt-train-coverage_attn: 'false'
-onmt-train-lambda_coverage: 1
-onmt-train-loss_scale: 0
-onmt-train-data_ids: []
-onmt-train-data_weights: [1]
-onmt-train-save_checkpoint_steps: 5000
-onmt-train-keep_checkpoint: -1
-onmt-train-gpu_ranks: []
-onmt-train-world_size: 1
-onmt-train-gpu_backend: nccl
-onmt-train-gpu_verbose_level: 0
-onmt-train-master_ip: localhost
-onmt-train-master_port: 10000
-onmt-train-queue_size: 400
-onmt-train-seed: -1
-onmt-train-param_init: 0.1
-onmt-train-param_init_glorot: 'false'
-onmt-train-train_from: ''
-onmt-train-reset_optim: 'none' # choose between {none, all, states, keep_states}
-onmt-train-pre_word_vecs_enc: 'none'
-onmt-train-pre_word_vecs_dec: 'none'
-onmt-train-fix_word_vecs_enc: 'false'
-onmt-train-fix_word_vecs_dec: 'false'
-onmt-train-batch_size: 64
-onmt-train-batch_type: sents # choose between {sents, tokens}
-onmt-train-pool_factor: 8192
-onmt-train-normalization: sents # choose between {sents, tokens}
-onmt-train-accum_count: [1]
-onmt-train-accum_steps: [0]
-onmt-train-valid_steps: 10000
-onmt-train-valid_batch_size: 32
-onmt-train-max_generator_batches: 32
-onmt-train-train_steps: 300
-onmt-train-single_pass: 'false'
-onmt-train-epochs: 0
-onmt-train-early_stopping: 0
-onmt-train-early_stopping_criteria: 'none'
-onmt-train-optim: sgd # choose between {sgd, adagrad, adadelta, adam, sparseadam, adafactor, fusedadam}
-onmt-train-adagrad_accumulator_init: 0
-onmt-train-max_grad_norm: 5
-onmt-train-dropout: [0.3]
-onmt-train-dropout_steps: [0]
-onmt-train-truncated_decoder: 0
-onmt-train-adam_beta1: 0.9
-onmt-train-adam_beta2: 0.999
-onmt-train-label_smoothing: 0.0
-onmt-train-average_decay: 0
-onmt-train-average_every: 1
-onmt-train-learning_rate: 1.0
-onmt-train-learning_rate_decay: 0.5
-onmt-train-start_decay_steps: 50000
-onmt-train-decay_steps: 10000
-onmt-train-decay_method: 'none' # choose between {noam, noamwd, rsqrt, none}
-onmt-train-warmup_steps: 4000
-onmt-train-report_every: 50
-onmt-train-log_file: ''
-onmt-train-log_file_level: 0 # choose between {CRITICAL, NOTSET, WARNING, INFO, ERROR, DEBUG, 50, 0, 30, 20, 40, 10}
-onmt-train-exp_host: ''
-onmt-train-exp: ''
-onmt-train-tensorboard: 'false'
-onmt-train-tensorboard_log_dir: runs/onmt
-onmt-train-sample_rate: 16000
-onmt-train-window_size: 0.02
-onmt-train-image_channel_size: 3 # choose between {3, 1}
+train-src_word_vec_size: 500
+train-tgt_word_vec_size: 500
+train-word_vec_size: -1
+train-share_decoder_embeddings: 'false'
+train-share_embeddings: 'false'
+train-position_encoding: 'false'
+train-feat_merge: concat # choose between {concat, sum, mlp}
+train-feat_vec_size: -1
+train-feat_vec_exponent: 0.7
+train-model_type: text # choose between {text, img, audio}
+train-model_dtype: fp32 # choose between {fp32, fp16}
+train-encoder_type: rnn # choose between {rnn, brnn, mean, transformer, cnn}
+train-decoder_type: rnn # choose between {rnn, transformer, cnn}
+train-layers: -1
+train-enc_layers: 2
+train-dec_layers: 2
+train-rnn_size: -1
+train-enc_rnn_size: 500
+train-dec_rnn_size: 500
+train-audio_enc_pooling: 1
+train-cnn_kernel_width: 3
+train-input_feed: 1
+train-bridge: 'false'
+train-rnn_type: LSTM # choose between {LSTM, GRU, SRU}
+train-context_gate: 'none' # choose between {source, target, both, none}
+train-global_attention: general # choose between {dot, general, mlp, none}
+train-global_attention_function: softmax # choose between {softmax, sparsemax}
+train-self_attn_type: scaled-dot #choose between {scaled-dot, average}
+train-max_relative_positions: 0
+train-heads: 8
+train-transformer_ff: 2048
+train--copy_attn: 'false'
+train-copy_attn_type: 'none' # choose between {dot, general, mlp, none}
+train-generator_function: softmax # choose between {softmax, sparsemax}
+train-copy_attn_force: 'false'
+train-reuse_copy_attn: 'false'
+train-copy_loss_by_seqlength: 'false'
+train-coverage_attn: 'false'
+train-lambda_coverage: 1
+train-loss_scale: 0
+train-data_ids: []
+train-data_weights: [1]
+train-save_checkpoint_steps: 5000
+train-keep_checkpoint: -1
+train-gpu_ranks: []
+train-world_size: 1
+train-gpu_backend: nccl
+train-gpu_verbose_level: 0
+train-master_ip: localhost
+train-master_port: 10000
+train-queue_size: 400
+train-seed: -1
+train-param_init: 0.1
+train-param_init_glorot: 'false'
+train-train_from: ''
+train-reset_optim: 'none' # choose between {none, all, states, keep_states}
+train-pre_word_vecs_enc: 'none'
+train-pre_word_vecs_dec: 'none'
+train-fix_word_vecs_enc: 'false'
+train-fix_word_vecs_dec: 'false'
+train-batch_size: 64
+train-batch_type: sents # choose between {sents, tokens}
+train-pool_factor: 8192
+train-normalization: sents # choose between {sents, tokens}
+train-accum_count: [1]
+train-accum_steps: [0]
+train-valid_steps: 10000
+train-valid_batch_size: 32
+train-max_generator_batches: 32
+train-train_steps: 300
+train-single_pass: 'false'
+train-epochs: 0
+train-early_stopping: 0
+train-early_stopping_criteria: 'none'
+train-optim: sgd # choose between {sgd, adagrad, adadelta, adam, sparseadam, adafactor, fusedadam}
+train-adagrad_accumulator_init: 0
+train-max_grad_norm: 5
+train-dropout: [0.3]
+train-dropout_steps: [0]
+train-truncated_decoder: 0
+train-adam_beta1: 0.9
+train-adam_beta2: 0.999
+train-label_smoothing: 0.0
+train-average_decay: 0
+train-average_every: 1
+train-learning_rate: 1.0
+train-learning_rate_decay: 0.5
+train-start_decay_steps: 50000
+train-decay_steps: 10000
+train-decay_method: 'none' # choose between {noam, noamwd, rsqrt, none}
+train-warmup_steps: 4000
+train-report_every: 50
+train-log_file: ''
+train-log_file_level: 0 # choose between {CRITICAL, NOTSET, WARNING, INFO, ERROR, DEBUG, 50, 0, 30, 20, 40, 10}
+train-exp_host: ''
+train-exp: ''
+train-tensorboard: 'false'
+train-tensorboard_log_dir: runs/onmt
+train-sample_rate: 16000
+train-window_size: 0.02
+train-image_channel_size: 3 # choose between {3, 1}
 
 # OpenNMT translate.py configurations
-onmt-translate-fp32: 'false'
-onmt-translate-avg_raw_probs: 'false'
-onmt-translate-data_type: text # choose between {text, img, audio}
-onmt-translate-src_dir: ''
-onmt-translate-tgt: 'none'
-onmt-translate-shard_size: 10000
-onmt-translate-report_bleu: 'false'
-onmt-translate-report_rouge: 'false'
-onmt-translate-report_time: 'false'
-onmt-translate-dynamic_dict: 'false'
-onmt-translate-share_vocab: 'false'
-onmt-translate-random_sampling_topk: 1
-onmt-translate-random_sampling_temp: 1.0
-onmt-translate-seed: 829
-onmt-translate-beam_size: 5
-onmt-translate-min_length: 0
-onmt-translate-max_length: 100
-onmt-translate-stepwise_penalty: 'false'
-onmt-translate-length_penalty: 'none' # choose from {none, wu, avg}
-onmt-translate-ratio: -0.0
-onmt-translate-coverage_penalty: 'none' # choose from {none, wu, avg}
-onmt-translate-alpha: 0.0
-onmt-translate-beta: -0.0
-onmt-translate-block_ngram_repeat: 0
-onmt-translate-ignore_when_blocking: []
-onmt-translate-replace_unk: 'true'
-onmt-translate-phrase_table: ''
-onmt-translate-verbose: 'true'
-onmt-translate-log_file: ''
-onmt-translate-log_file_level: 0 # choose between {CRITICAL, NOTSET, WARNING, INFO, ERROR, DEBUG, 50, 0, 30, 20, 40, 10}
-onmt-translate-attn_debug: 'false'
-onmt-translate-dump_beam: ''
-onmt-translate-n_best: 1
-onmt-translate-batch_size: 30
-onmt-translate-gpu: -1
-onmt-translate-sample_rate: 16000
-onmt-translate-window_size: 0.02
-onmt-translate-window_stride: 0.01
-onmt-translate-window: hamming
-onmt-translate-image_channel_size: 3 # choose between {3, 1}
+# For more information: http://opennmt.net/OpenNMT-py/options/translate.html
+translate-fp32: 'false'
+translate-avg_raw_probs: 'false'
+translate-data_type: text # choose between {text, img, audio}
+translate-src_dir: ''
+translate-tgt: 'none'
+translate-shard_size: 10000
+translate-report_bleu: 'false'
+translate-report_rouge: 'false'
+translate-report_time: 'false'
+translate-dynamic_dict: 'false'
+translate-share_vocab: 'false'
+translate-random_sampling_topk: 1
+translate-random_sampling_temp: 1.0
+translate-seed: 829
+translate-beam_size: 5
+translate-min_length: 0
+translate-max_length: 100
+translate-stepwise_penalty: 'false'
+translate-length_penalty: 'none' # choose from {none, wu, avg}
+translate-ratio: -0.0
+translate-coverage_penalty: 'none' # choose from {none, wu, avg}
+translate-alpha: 0.0
+translate-beta: -0.0
+translate-block_ngram_repeat: 0
+translate-ignore_when_blocking: []
+translate-replace_unk: 'true'
+translate-phrase_table: ''
+translate-verbose: 'true'
+translate-log_file: ''
+translate-log_file_level: 0 # choose between {CRITICAL, NOTSET, WARNING, INFO, ERROR, DEBUG, 50, 0, 30, 20, 40, 10}
+translate-attn_debug: 'false'
+translate-dump_beam: ''
+translate-n_best: &num_sent 5
+translate-batch_size: 30
+translate-gpu: -1
+translate-sample_rate: 16000
+translate-window_size: 0.02
+translate-window_stride: 0.01
+translate-window: hamming
+translate-image_channel_size: 3 # choose between {3, 1}
+
+# format_output.py configurations
+format_output-num_sent: *num_sent

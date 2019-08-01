@@ -20,9 +20,9 @@ def main(src_path, translated_path, output_path, num_sentence):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("--src_path")
-    parser.add_argument("--translated_path")
-    parser.add_argument("--json_path")
+    parser.add_argument("--src")
+    parser.add_argument("--tgt")
+    parser.add_argument("--output")
     parser.add_argument("--num_sent")
     args = parser.parse_args()
 
