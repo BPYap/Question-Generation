@@ -1,5 +1,10 @@
 # Question_Generation
 
+##### Table of Contents  
+[Introduction](#introduction)  
+[Installation](#installation)  
+[Usage](#usage) 
+
 ## Introduction
 [To be added]
 
