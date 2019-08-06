@@ -26,4 +26,4 @@ if __name__ == '__main__':
     parser.add_argument("--num_sent")
     args = parser.parse_args()
 
-    main(args.src_path, args.translated_path, args.json_path, int(args.num_sent))
+    main(args.src, args.tgt, args.output, int(args.num_sent))

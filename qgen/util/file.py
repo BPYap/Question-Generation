@@ -1,4 +1,16 @@
 import os
+from pathlib import Path
+
+
+def get_filename(path):
+    return Path(path).name
+
+
+def create_folder(path):
+    if os.path.exists(path):
+        print(f"{path} already exists.")
+    else:
+        os.mkdir(path)
 
 
 def read_file(path):

@@ -1,34 +1,34 @@
-# Path configurations
-build_parallel-src: data/input/sample/source.txt
-build_parallel-tgt: data/input/sample/target.txt
-build_parallel-parallel_src: &parallel_src data/output/sample/source_parallel.txt
-build_parallel-parallel_tgt: &parallel_tgt data/output/sample/target_parallel.txt
+# Filename configurations (leave unchanged if unsure)
+build_parallel-src: source_input.txt
+build_parallel-tgt: target_input.txt
+build_parallel-parallel_src: &parallel_src source_parallel.txt
+build_parallel-parallel_tgt: &parallel_tgt target_parallel.txt
 
 prepare_dataset-input_src: *parallel_src
 prepare_dataset-input_tgt: *parallel_tgt
-prepare_dataset-train_src: &train_src data/output/sample/sample-source_train.txt
-prepare_dataset-train_tgt: &train_tgt data/output/sample/target_train.txt
-prepare_dataset-valid_src: &valid_src data/output/sample/source_validation.txt
-prepare_dataset-valid_tgt: &valid_tgt data/output/sample/target_validation.txt
-prepare_dataset-test_src: &test_src data/output/sample/source_test.txt
-prepare_dataset-test_tgt: data/output/sample/target_test.txt
+prepare_dataset-train_src: &train_src source_train.txt
+prepare_dataset-train_tgt: &train_tgt target_train.txt
+prepare_dataset-valid_src: &valid_src source_validation.txt
+prepare_dataset-valid_tgt: &valid_tgt target_validation.txt
+prepare_dataset-test_src: &test_src source_test.txt
+prepare_dataset-test_tgt: target_test.txt
 
 preprocess-train_src: *train_src
 preprocess-train_tgt: *train_tgt
 preprocess-valid_src: *valid_src
 preprocess-valid_tgt: *valid_tgt
-preprocess-save_data: &data data/output/sample/onmt_data
+preprocess-save_data: &data onmt_data
 
 train-data: *data
-train-save_model: model/sample-onmt_model
+train-save_model: onmt_model
 
-translate-model: model/sample-onmt_model_step_300.pt
+translate-model: onmt_model.pt
 translate-src: *test_src
-translate-output: &predicted_tgt data/output/sample/target_predicted.txt
+translate-output: &predicted_tgt target_predicted.txt
 
 format_output-src: *test_src
 format_output-tgt: *predicted_tgt
-format_output-output: data/output/sample/formatted.json
+format_output-output: formatted.json
 
 # build_parallel.py configurations
 build_parallel-encoder: use # choose between {fasttext, glove, use}
@@ -38,7 +38,7 @@ prepare_dataset-validation_ratio: 0.2
 prepare_dataset-test_ratio: 0.2
 
 # OpenNMT preprocess.py configurations
-  # For more information: http://opennmt.net/OpenNMT-py/options/preprocess.html
+# For more information: http://opennmt.net/OpenNMT-py/options/preprocess.html
 preprocess-data_type: text # choose between {text, img, audio}
 preprocess-train_ids: []
 preprocess-src_dir: ''
