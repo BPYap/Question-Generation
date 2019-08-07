@@ -3,7 +3,8 @@ env/
 build/
 dist/
 *.egg-info/
+*.pyc
+OpenNMT-py/
+config/
 data/
 model/
-OpenNMT-py/
-*.pyc
