@@ -1,6 +1,9 @@
-# Filename configurations (leave unchanged if unsure)
-build_parallel-src: source_input.txt
-build_parallel-tgt: target_input.txt
+# Input corpus
+corpus_directory: data/corpus/sample/
+build_parallel-src: source.txt
+build_parallel-tgt: target.txt
+
+# Other file names (leave unchanged if unsure)
 build_parallel-parallel_src: &parallel_src source_parallel.txt
 build_parallel-parallel_tgt: &parallel_tgt target_parallel.txt
 
@@ -34,8 +37,8 @@ format_output-output: formatted.json
 build_parallel-encoder: use # choose between {fasttext, glove, use}
 
 # prepare_dataset.py configurations
-prepare_dataset-validation_ratio: 0.2
-prepare_dataset-test_ratio: 0.2
+prepare_dataset-validation_ratio: 0.1
+prepare_dataset-test_ratio: 0.1
 
 # OpenNMT preprocess.py configurations
 # For more information: http://opennmt.net/OpenNMT-py/options/preprocess.html
@@ -46,8 +49,8 @@ preprocess-shard_size: 1000000
 preprocess-src_vocab: ''
 preprocess-tgt_vocab: ''
 preprocess-features_vocabs_prefix: ''
-preprocess-src_vocab_size: 50000
-preprocess-tgt_vocab_size: 50000
+preprocess-src_vocab_size: 500
+preprocess-tgt_vocab_size: 500
 preprocess-vocab_size_multiple: 1
 preprocess-src_words_min_frequency: 0
 preprocess-tgt_words_min_frequency: 0
@@ -59,7 +62,7 @@ preprocess-lower: 'false'
 preprocess-filter_valid: 'false'
 preprocess-shuffle: 0
 preprocess-seed: 3435
-preprocess-report_every: 100000
+preprocess-report_every: 1
 preprocess-log_file: ''
 preprocess-log_file_level: 0 # choose between {CRITICAL, NOTSET, WARNING, INFO, ERROR, DEBUG, 50, 0, 30, 20, 40, 10}
 preprocess-sample_rate: 16000
@@ -70,8 +73,8 @@ preprocess-image_channel_size: 3 # choose between {3, 1}
 
 # OpenNMT train.py configurations
 # For more information: http://opennmt.net/OpenNMT-py/options/train.html
-train-src_word_vec_size: 500
-train-tgt_word_vec_size: 500
+train-src_word_vec_size: 50
+train-tgt_word_vec_size: 50
 train-word_vec_size: -1
 train-share_decoder_embeddings: 'false'
 train-share_embeddings: 'false'
@@ -87,13 +90,13 @@ train-layers: -1
 train-enc_layers: 2
 train-dec_layers: 2
 train-rnn_size: -1
-train-enc_rnn_size: 500
-train-dec_rnn_size: 500
+train-enc_rnn_size: 50
+train-dec_rnn_size: 50
 train-audio_enc_pooling: 1
 train-cnn_kernel_width: 3
 train-input_feed: 1
 train-bridge: 'false'
-train-rnn_type: LSTM # choose between {LSTM, GRU, SRU}
+train-rnn_type: GRU # choose between {LSTM, GRU, SRU}
 train-context_gate: 'none' # choose between {source, target, both, none}
 train-global_attention: general # choose between {dot, general, mlp, none}
 train-global_attention_function: softmax # choose between {softmax, sparsemax}
@@ -130,16 +133,16 @@ train-pre_word_vecs_enc: 'none'
 train-pre_word_vecs_dec: 'none'
 train-fix_word_vecs_enc: 'false'
 train-fix_word_vecs_dec: 'false'
-train-batch_size: 64
+train-batch_size: 8
 train-batch_type: sents # choose between {sents, tokens}
 train-pool_factor: 8192
 train-normalization: sents # choose between {sents, tokens}
 train-accum_count: [1]
 train-accum_steps: [0]
-train-valid_steps: 10000
-train-valid_batch_size: 32
-train-max_generator_batches: 32
-train-train_steps: 300
+train-valid_steps: 1
+train-valid_batch_size: 8
+train-max_generator_batches: 8
+train-train_steps: 30
 train-single_pass: 'false'
 train-epochs: 0
 train-early_stopping: 0
@@ -147,7 +150,7 @@ train-early_stopping_criteria: 'none'
 train-optim: sgd # choose between {sgd, adagrad, adadelta, adam, sparseadam, adafactor, fusedadam}
 train-adagrad_accumulator_init: 0
 train-max_grad_norm: 5
-train-dropout: [0.3]
+train-dropout: [0.1]
 train-dropout_steps: [0]
 train-truncated_decoder: 0
 train-adam_beta1: 0.9
@@ -160,8 +163,8 @@ train-learning_rate_decay: 0.5
 train-start_decay_steps: 50000
 train-decay_steps: 10000
 train-decay_method: 'none' # choose between {noam, noamwd, rsqrt, none}
-train-warmup_steps: 4000
-train-report_every: 50
+train-warmup_steps: 0
+train-report_every: 10
 train-log_file: ''
 train-log_file_level: 0 # choose between {CRITICAL, NOTSET, WARNING, INFO, ERROR, DEBUG, 50, 0, 30, 20, 40, 10}
 train-exp_host: ''
@@ -206,7 +209,7 @@ translate-log_file: ''
 translate-log_file_level: 0 # choose between {CRITICAL, NOTSET, WARNING, INFO, ERROR, DEBUG, 50, 0, 30, 20, 40, 10}
 translate-attn_debug: 'false'
 translate-dump_beam: ''
-translate-n_best: &num_sent 5
+translate-n_best: &num_sent 2
 translate-batch_size: 30
 translate-gpu: -1
 translate-sample_rate: 16000

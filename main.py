@@ -4,46 +4,51 @@ import subprocess
 from qgen.util.config import load_yaml_config
 from qgen.util.file import create_folder, get_filename
 
-DATA_FILENAME = ["build_parallel-src",
-                 "build_parallel-tgt",
-                 "build_parallel-parallel_src",
-                 "build_parallel-parallel_tgt",
+INPUT_FILENAME = ["build_parallel-src", "build_parallel-tgt"]
+DATA_FILENAME = [
+    "build_parallel-parallel_src",
+    "build_parallel-parallel_tgt",
 
-                 "prepare_dataset-input_src",
-                 "prepare_dataset-input_tgt",
-                 "prepare_dataset-train_src",
-                 "prepare_dataset-train_tgt",
-                 "prepare_dataset-valid_src",
-                 "prepare_dataset-valid_tgt",
-                 "prepare_dataset-test_src",
-                 "prepare_dataset-test_tgt",
+    "prepare_dataset-input_src",
+    "prepare_dataset-input_tgt",
+    "prepare_dataset-train_src",
+    "prepare_dataset-train_tgt",
+    "prepare_dataset-valid_src",
+    "prepare_dataset-valid_tgt",
+    "prepare_dataset-test_src",
+    "prepare_dataset-test_tgt",
 
-                 "preprocess-train_src",
-                 "preprocess-train_tgt",
-                 "preprocess-valid_src",
-                 "preprocess-valid_tgt",
-                 "preprocess-save_data",
+    "preprocess-train_src",
+    "preprocess-train_tgt",
+    "preprocess-valid_src",
+    "preprocess-valid_tgt",
+    "preprocess-save_data",
 
-                 "train-data",
+    "train-data",
 
-                 "translate-src",
-                 "translate-output",
+    "translate-src",
+    "translate-output",
 
-                 "format_output-src",
-                 "format_output-tgt",
-                 "format_output-output"]
+    "format_output-src",
+    "format_output-tgt",
+    "format_output-output"
+]
 SAVE_MODEL_NAME = "train-save_model"
 TRANSLATE_MODEL_NAME = "translate-model"
 TRAIN_STEP = "train-train_steps"
 
 
-def _resolve_file_path(experiment_name, config):
-    # Create new folder `<experiment_name>` in `data/` if not exist
-    create_folder(f"data/{experiment_name}")
+def _process_file_path(experiment_name, config):
+    # Convert file name of input files to relative path
+    for input_file in INPUT_FILENAME:
+        config[input_file] = config['corpus_directory'] + config[input_file]
+
+    # Create new folder `<experiment_name>` in `data/output/` if not exist
+    create_folder(f"data/output/{experiment_name}")
 
     # Convert file name of data files to relative path
     for data_file in DATA_FILENAME:
-        config[data_file] = f"data/{experiment_name}/{config[data_file]}"
+        config[data_file] = f"data/output/{experiment_name}/{config[data_file]}"
 
     # Convert file name of model file to relative path
     config[SAVE_MODEL_NAME] = f"model/{experiment_name}-{config[SAVE_MODEL_NAME]}"
@@ -100,7 +105,7 @@ if __name__ == '__main__':
         exit(-1)
 
     configs = load_yaml_config(args.config)
-    _resolve_file_path(get_filename(args.config).split('.')[0], configs)
+    _process_file_path(get_filename(args.config).split('.')[0], configs)
 
     if args.script == 'all':
         for script_name, relative_path in valid_scripts.items():

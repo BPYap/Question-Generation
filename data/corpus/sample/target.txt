@@ -1,0 +1,10 @@
+Style 2 sample sentence: first
+Style 2 sample sentence: second
+Style 2 sample sentence: third
+Style 2 sample sentence: fourth
+Style 2 sample sentence: fifth
+Style 2 sample sentence: sixth
+Style 2 sample sentence: seventh
+Style 2 sample sentence: eighth
+Style 2 sample sentence: ninth
+Style 2 sample sentence: tenth
