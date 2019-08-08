@@ -1,3 +1,4 @@
+import json
 import os
 from pathlib import Path
 
@@ -11,6 +12,13 @@ def create_folder(path):
         print(f"{path} already exists.")
     else:
         os.mkdir(path)
+
+
+def read_json(path):
+    with open(path, 'r') as f:
+        data = json.load(f)
+
+    return data
 
 
 def read_file(path):

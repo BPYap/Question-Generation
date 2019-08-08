@@ -1,40 +1,9 @@
-# Input corpus
-corpus_directory: data/corpus/sample/
-build_parallel-src: source.txt
-build_parallel-tgt: target.txt
-
-# Other file names (leave unchanged if unsure)
-build_parallel-parallel_src: &parallel_src source_parallel.txt
-build_parallel-parallel_tgt: &parallel_tgt target_parallel.txt
-
-prepare_dataset-input_src: *parallel_src
-prepare_dataset-input_tgt: *parallel_tgt
-prepare_dataset-train_src: &train_src source_train.txt
-prepare_dataset-train_tgt: &train_tgt target_train.txt
-prepare_dataset-valid_src: &valid_src source_validation.txt
-prepare_dataset-valid_tgt: &valid_tgt target_validation.txt
-prepare_dataset-test_src: &test_src source_test.txt
-prepare_dataset-test_tgt: target_test.txt
-
-preprocess-train_src: *train_src
-preprocess-train_tgt: *train_tgt
-preprocess-valid_src: *valid_src
-preprocess-valid_tgt: *valid_tgt
-preprocess-save_data: &data onmt_data
-
-train-data: *data
-train-save_model: onmt_model
-
-translate-model: onmt_model.pt
-translate-src: *test_src
-translate-output: &predicted_tgt target_predicted.txt
-
-format_output-src: *test_src
-format_output-tgt: *predicted_tgt
-format_output-output: formatted.json
-
-# build_parallel.py configurations
-build_parallel-encoder: use # choose between {fasttext, glove, use}
+# general configurations
+src_corpus: data/corpus/sample/source.txt
+tgt_corpus: data/corpus/sample/target.txt
+sentence_encoder: use # choose between {fasttext, glove, use}
+similarity_threshold: 0.7
+min_update_rate: 0.5
 
 # prepare_dataset.py configurations
 prepare_dataset-validation_ratio: 0.1
@@ -49,8 +18,8 @@ preprocess-shard_size: 1000000
 preprocess-src_vocab: ''
 preprocess-tgt_vocab: ''
 preprocess-features_vocabs_prefix: ''
-preprocess-src_vocab_size: 500
-preprocess-tgt_vocab_size: 500
+preprocess-src_vocab_size: 50
+preprocess-tgt_vocab_size: 50
 preprocess-vocab_size_multiple: 1
 preprocess-src_words_min_frequency: 0
 preprocess-tgt_words_min_frequency: 0
@@ -87,8 +56,8 @@ train-model_dtype: fp32 # choose between {fp32, fp16}
 train-encoder_type: rnn # choose between {rnn, brnn, mean, transformer, cnn}
 train-decoder_type: rnn # choose between {rnn, transformer, cnn}
 train-layers: -1
-train-enc_layers: 2
-train-dec_layers: 2
+train-enc_layers: 1
+train-dec_layers: 1
 train-rnn_size: -1
 train-enc_rnn_size: 50
 train-dec_rnn_size: 50
@@ -139,10 +108,10 @@ train-pool_factor: 8192
 train-normalization: sents # choose between {sents, tokens}
 train-accum_count: [1]
 train-accum_steps: [0]
-train-valid_steps: 1
-train-valid_batch_size: 8
-train-max_generator_batches: 8
-train-train_steps: 30
+train-valid_steps: 8
+train-valid_batch_size: 2
+train-max_generator_batches: 2
+train-train_steps: 128
 train-single_pass: 'false'
 train-epochs: 0
 train-early_stopping: 0

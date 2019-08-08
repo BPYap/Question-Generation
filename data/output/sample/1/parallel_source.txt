@@ -1,0 +1,10 @@
+This is the first sample sentence in style 1
+This is the second sample sentence in style 1
+This is the third sample sentence in style 1
+This is the fourth sample sentence in style 1
+This is the fifth sample sentence in style 1
+This is the sixth sample sentence in style 1
+This is the seventh sample sentence in style 1
+This is the eighth sample sentence in style 1
+This is the ninth sample sentence in style 1
+This is the tenth sample sentence in style 1

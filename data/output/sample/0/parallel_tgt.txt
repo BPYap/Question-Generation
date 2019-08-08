@@ -1,10 +1,10 @@
-Style 2 sample sentence: sixth
+Style 2 sample sentence: third
+Style 2 sample sentence: third
+Style 2 sample sentence: third
 Style 2 sample sentence: fourth
-Style 2 sample sentence: third
-Style 2 sample sentence: third
-Style 2 sample sentence: third
-Style 2 sample sentence: sixth
 Style 2 sample sentence: fourth
+Style 2 sample sentence: sixth
+Style 2 sample sentence: sixth
 Style 2 sample sentence: sixth
 Style 2 sample sentence: sixth
 Style 2 sample sentence: sixth
