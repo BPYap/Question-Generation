@@ -33,7 +33,7 @@ python setup.py install
 ### Step 4: Download pretrained models
 ##### fastText
 1. Download [fastText English vectors](https://fasttext.cc/docs/en/crawl-vectors.html) [[direct link](https://dl.fbaipublicfiles.com/fasttext/vectors-crawl/cc.en.300.bin.gz)]
-2. Decompress and put `cc.en.300.bin` under `model/pretrained/fastText`directory
+2. Decompress and put `cc.en.300.bin` under `model/pretrained/fastText` directory
 ##### GloVe
 1. Download [spaCy pretrained GloVe model](https://spacy.io/models/en#en_vectors_web_lg) [[direct link](https://github.com/explosion/spacy-models/releases/download/en_vectors_web_lg-2.1.0/en_vectors_web_lg-2.1.0.tar.gz)]
 2. Decompress and put `en_vectors_web_lg-2.1.0` (the most nested folder) under `model/pretrained/spacy_glove` directory
@@ -50,7 +50,7 @@ python imt.py config_file_path
 ```
 
 ### Configuration file
-This script reads all configuration settings from a single yaml file. To get started, copy the provided `sample.yml` file in `config/experiments/` folder and modify the value of each parameter accordingly. Each parameter (other than the general configurations) is prefixed by the name of pipeline component that consumes the parameter. For example, `bootstrap_corpus-sentence_encoder` indicates parameter `sentence_encoder` is consumed by the `bootstrap_corpus` pipeline.
+This script reads all configuration settings from a single yaml file. To get started, copy the provided `sample.yml` file in `config/experiments/` folder and modify the value of each parameter accordingly. Each parameter (other than the general configurations) is prefixed by the name of pipeline component that consumes it. For example, `bootstrap_corpus-sentence_encoder` indicates parameter `sentence_encoder` is consumed by the `bootstrap_corpus` pipeline.
 
 There are in total 6 types of configuration parameter:
 ##### general
@@ -60,7 +60,7 @@ There are in total 6 types of configuration parameter:
  
 ##### bootstrap_corpus
  - `sentence_encoder`: Type of sentence encoder. Choose between "fasttext" (Average fastText embedding), "glove" (Average GloVe embedding) or "use" (Universal Sentence Encoder).
- - `similarity_threshold`: Threshold for cosine similarity score when matching source sentence and target sentence. Only keep source-target pair whose cosine similarity score exceeds this threshold value.
+ - `similarity_threshold`: Threshold for cosine similarity score when matching source sentence and target sentence. Source-target pair whose cosine similarity score is lower than this threshold value is discarded.
 
 ##### prepare_dataset
  - `validation_ratio`: Ratio of validation set when splitting data set for OpenNMT training.
