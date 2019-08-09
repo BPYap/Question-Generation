@@ -152,6 +152,9 @@ def main(config_path):
     sentence_encoder = yaml_config['bootstrap_corpus-sentence_encoder']
     similarity_threshold = yaml_config['bootstrap_corpus-similarity_threshold']
 
+    # Set the `num_sent` argument for `format_output.py`
+    yaml_config['format_output-num_sent'] = yaml_config['translate-n_best']
+
     # Path to other scripts
     prepare_dataset = 'script/utility/prepare_dataset.py'
     preprocess = 'OpenNMT-py/preprocess.py'

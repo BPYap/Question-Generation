@@ -180,7 +180,7 @@ translate-log_file: ''
 translate-log_file_level: 0 # choose between {CRITICAL, NOTSET, WARNING, INFO, ERROR, DEBUG, 50, 0, 30, 20, 40, 10}
 translate-attn_debug: 'false'
 translate-dump_beam: ''
-translate-n_best: &num_sent 2
+translate-n_best: 2
 translate-batch_size: 30
 translate-gpu: -1
 translate-sample_rate: 16000
@@ -188,6 +188,3 @@ translate-window_size: 0.02
 translate-window_stride: 0.01
 translate-window: hamming
 translate-image_channel_size: 3 # choose between {3, 1}
-
-# format_output.py configurations
-format_output-num_sent: *num_sent
