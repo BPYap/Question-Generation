@@ -1,9 +1,11 @@
 # general configurations
 src_corpus: data/corpus/sample/source.txt
 tgt_corpus: data/corpus/sample/target.txt
-sentence_encoder: use # choose between {fasttext, glove, use}
-similarity_threshold: 0.7
 min_update_rate: 0.5
+
+# bootstrap_corpus configurations
+bootstrap_corpus-sentence_encoder: use # choose between {fasttext, glove, use}
+bootstrap_corpus-similarity_threshold: 0.7
 
 # prepare_dataset.py configurations
 prepare_dataset-validation_ratio: 0.1

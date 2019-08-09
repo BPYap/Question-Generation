@@ -148,9 +148,9 @@ def main(config_path):
     # Extract general configurations
     src_corpus = yaml_config['src_corpus']
     tgt_corpus = yaml_config['tgt_corpus']
-    sentence_encoder = yaml_config['sentence_encoder']
-    similarity_threshold = yaml_config['similarity_threshold']
     min_update_rate = yaml_config['min_update_rate']
+    sentence_encoder = yaml_config['bootstrap_corpus-sentence_encoder']
+    similarity_threshold = yaml_config['bootstrap_corpus-similarity_threshold']
 
     # Path to other scripts
     prepare_dataset = 'script/utility/prepare_dataset.py'
