@@ -1,13 +1,18 @@
 import argparse
 import codecs
+import importlib
 import os
+import sys
 
-import onmt.opts as opts
-from onmt.translate.translator import build_translator
-from onmt.utils.parse import ArgumentParser
+abs_path = os.path.dirname(os.path.realpath(__file__))
+sys.path.insert(0, os.path.join(abs_path, 'OpenNMT-py'))
+
+opts = importlib.import_module('onmt.opts')
+build_translator = importlib.import_module('onmt.translate.translator').build_translator
+ArgumentParser = importlib.import_module('onmt.utils.parse').ArgumentParser
 
 
-def _run(model_path, n_best=5):
+def main(model_path, n_best=5):
     onmt_parser = ArgumentParser()
     opts.translate_opts(onmt_parser)
     opt = onmt_parser.parse_args([f"--model={model_path}", "--src=''", f"--n_best={n_best}"])
@@ -28,4 +33,4 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--model_path")
 
-    _run(parser.parse_args().model_path)
+    main(parser.parse_args().model_path)

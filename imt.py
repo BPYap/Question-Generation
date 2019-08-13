@@ -84,7 +84,7 @@ def _run_python_script(script, yaml_config):
 
 
 def _init_builder(tgt_path, encoder):
-    pretrained_config = load_yaml_config("config/pretrained.yml")
+    pretrained_config = load_yaml_config("config/pretrained/encoder.yml")
     fasttext_path = pretrained_config['fasttext_model_path']
     glove_path = pretrained_config['glove_model_path']
     use_path = pretrained_config['use_model_path']
@@ -163,7 +163,7 @@ def main(config_path):
     format_output = 'script/utility/format_output.py'
 
     # Create new folder `<experiment_name>` under `data/output/`
-    data_dir = f"data/output/{experiment_name}"
+    data_dir = f"data/imt/{experiment_name}"
     file_util.create_folder(data_dir)
 
     # Create new folder `<experiment_name>` under `model/`
