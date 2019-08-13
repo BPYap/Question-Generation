@@ -47,7 +47,7 @@ python setup.py install
 Change to the root directory `Question-Generation/` and follow the instructions at this [link](http://opennmt.net/OpenNMT-py/main.html#installation).
 
 ## Usage
-###Iterative Matching and Translation
+### Iterative Matching and Translation
 To execute the Iterative Matching and Translation (IMT) pipeline:
 ```
 python imt.py config_file_path
@@ -82,5 +82,5 @@ There are in total 6 types of configuration parameter:
 ### Demo Script
 [To be added]
 
-### Acknowledgement/References
+## Acknowledgement/References
 [To be added]
