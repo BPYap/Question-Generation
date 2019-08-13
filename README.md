@@ -47,12 +47,13 @@ python setup.py install
 Change to the root directory `Question-Generation/` and follow the instructions at this [link](http://opennmt.net/OpenNMT-py/main.html#installation).
 
 ## Usage
+###Iterative Matching and Translation
 To execute the Iterative Matching and Translation (IMT) pipeline:
 ```
 python imt.py config_file_path
 ```
 
-### Configuration file
+#### Configuration file
 This script reads all configuration settings from a single yaml file. To get started, copy the provided `sample.yml` file in `config/experiments/` folder and modify the value of each parameter accordingly. Each parameter (other than the general configurations) is prefixed by the name of pipeline component that consumes it. For example, `bootstrap_corpus-sentence_encoder` indicates parameter `sentence_encoder` is consumed by the `bootstrap_corpus` pipeline.
 
 There are in total 6 types of configuration parameter:
@@ -77,3 +78,9 @@ There are in total 6 types of configuration parameter:
  
 ##### translate
  - Refer to http://opennmt.net/OpenNMT-py/options/translate.html
+ 
+### Demo Script
+[To be added]
+
+### Acknowledgement/References
+[To be added]
