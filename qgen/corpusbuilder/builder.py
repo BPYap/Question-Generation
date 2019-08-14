@@ -5,15 +5,16 @@ from ..util import nlp
 
 
 class Builder:
-    def __init__(self, tgt_path):
+    def __init__(self, tgt_path, batch_size=10000):
         """ Initialize parallel corpus builder
 
         :param tgt_path: path to target corpus
+        :param batch_size: number of sentences per batch when calculating cosine similarity to prevent memory overflow
         """
-        self.tgt_sentences = self._read_unique_lines(tgt_path)
+        self.target_sentences = self._read_unique_lines(tgt_path)
+        self.batch_size = batch_size
 
         self.encoder = None
-        self.target_vectors = None
 
     def set_encoder(self, encoder):
         self.encoder = encoder
@@ -28,16 +29,23 @@ class Builder:
 
         :return: most similar sentence if cosine similarity exceeds threshold value else return None
         """
-        if self.target_vectors is None:
-            print("Initializing target vectors...")
-            self.target_vectors = self.encoder.get_vectors(self.tgt_sentences)
-
         vector = self.encoder.get_vector(sentence)
-        distances = distance.cdist(np.reshape(vector, (1, -1)), self.target_vectors, 'cosine')[0]
-        most_similar_index = np.argmin(distances)
-        cosine_similarity_score = 1 - distances[most_similar_index]
 
-        return self.tgt_sentences[most_similar_index] if cosine_similarity_score >= threshold else None
+        max_similarity_score = 0
+        most_similar_target = None
+        for i in range(0, len(self.target_sentences), self.batch_size):
+            batch = self.target_sentences[i:i + self.batch_size]
+            target_vectors = self.encoder.get_vectors(batch)
+
+            distances = distance.cdist(np.reshape(vector, (1, -1)), target_vectors, 'cosine')[0]
+            local_most_similar_index = np.argmin(distances)
+            cosine_similarity_score = 1 - distances[local_most_similar_index]
+
+            if cosine_similarity_score >= threshold and cosine_similarity_score > max_similarity_score:
+                max_similarity_score = cosine_similarity_score
+                most_similar_target = batch[local_most_similar_index]
+
+        return most_similar_target
 
     def get_refined_target(self, src, current_tgt, candidate_tgt):
         """ Refine a pair of pseudo-parallel sentences.

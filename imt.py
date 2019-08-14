@@ -89,7 +89,7 @@ def _init_builder(tgt_path, encoder):
     glove_path = pretrained_config['glove_model_path']
     use_path = pretrained_config['use_model_path']
 
-    builder = Builder(tgt_path)
+    builder = Builder(tgt_path, batch_size=15000)
 
     if encoder == 'fasttext':
         builder.set_encoder(FTEncoder(fasttext_path))
