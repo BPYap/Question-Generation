@@ -1,23 +1,40 @@
-import numpy as np
-from scipy.spatial import distance
+from annoy import AnnoyIndex
+from tqdm.auto import tqdm
 
 from ..util import nlp
 
+_BATCH_SIZE = 20000
+_N_TREES = 10
+
 
 class Builder:
-    def __init__(self, tgt_path, batch_size=10000):
+    def __init__(self, target_path, annoy_index_path):
         """ Initialize parallel corpus builder
 
-        :param tgt_path: path to target corpus
-        :param batch_size: number of sentences per batch when calculating cosine similarity to prevent memory overflow
+        :param target_path: path to target corpus
+        :param annoy_index_path: path to store index built by annoy library
         """
-        self.target_sentences = self._read_unique_lines(tgt_path)
-        self.batch_size = batch_size
+        self.target_sentences = self._read_unique_lines(target_path)
+        self.annoy_index_path = annoy_index_path
 
         self.encoder = None
+        self.annoy_index = None
 
     def set_encoder(self, encoder):
         self.encoder = encoder
+
+    def build_annoy_index(self):
+        print("Building annoy index...")
+        self.annoy_index = AnnoyIndex(self.encoder.dimension, 'angular')
+        self.annoy_index.on_disk_build(self.annoy_index_path)
+
+        for starting_index in tqdm(range(0, len(self.target_sentences), _BATCH_SIZE)):
+            target_sentences = self.target_sentences[starting_index: starting_index + _BATCH_SIZE]
+            target_vectors = self.encoder.get_vectors(target_sentences)
+            for i, vector in enumerate(target_vectors, start=starting_index):
+                self.annoy_index.add_item(i, vector)
+
+        self.annoy_index.build(_N_TREES)
 
     def get_most_similar_target(self, sentence, threshold=0):
         """ Return the most similar target sentence (in terms of cosine similarity) to the input sentence.
@@ -29,23 +46,14 @@ class Builder:
 
         :return: most similar sentence if cosine similarity exceeds threshold value else return None
         """
+        if self.annoy_index is None:
+            raise RuntimeError("Annoy index not found!")
+
         vector = self.encoder.get_vector(sentence)
+        most_similar_index, distance = self.annoy_index.get_nns_by_vector(vector, 1, include_distances=True)
+        cosine_similarity_score = 1 - distance[0]
 
-        max_similarity_score = 0
-        most_similar_target = None
-        for i in range(0, len(self.target_sentences), self.batch_size):
-            batch = self.target_sentences[i:i + self.batch_size]
-            target_vectors = self.encoder.get_vectors(batch)
-
-            distances = distance.cdist(np.reshape(vector, (1, -1)), target_vectors, 'cosine')[0]
-            local_most_similar_index = np.argmin(distances)
-            cosine_similarity_score = 1 - distances[local_most_similar_index]
-
-            if cosine_similarity_score >= threshold and cosine_similarity_score > max_similarity_score:
-                max_similarity_score = cosine_similarity_score
-                most_similar_target = batch[local_most_similar_index]
-
-        return most_similar_target
+        return self.target_sentences[most_similar_index[0]] if cosine_similarity_score >= threshold else None
 
     def get_refined_target(self, src, current_tgt, candidate_tgt):
         """ Refine a pair of pseudo-parallel sentences.

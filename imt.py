@@ -1,7 +1,7 @@
 import argparse
 import subprocess
 
-from tqdm import tqdm
+from tqdm.auto import tqdm
 
 import qgen.util.file as file_util
 from qgen.corpusbuilder.builder import Builder
@@ -83,13 +83,13 @@ def _run_python_script(script, yaml_config):
     subprocess.run(command)
 
 
-def _init_builder(tgt_path, encoder):
+def _init_builder(target_path, annoy_index_path, encoder):
     pretrained_config = load_yaml_config("config/pretrained/encoder.yml")
     fasttext_path = pretrained_config['fasttext_model_path']
     glove_path = pretrained_config['glove_model_path']
     use_path = pretrained_config['use_model_path']
 
-    builder = Builder(tgt_path, batch_size=15000)
+    builder = Builder(target_path, annoy_index_path)
 
     if encoder == 'fasttext':
         builder.set_encoder(FTEncoder(fasttext_path))
@@ -97,6 +97,8 @@ def _init_builder(tgt_path, encoder):
         builder.set_encoder(GloveEncoder(glove_path))
     else:
         builder.set_encoder(USEEncoder(use_path))
+
+    builder.build_annoy_index()
 
     return builder
 
@@ -170,7 +172,7 @@ def main(config_path):
     model_dir = f"model/{experiment_name}"
     file_util.create_folder(model_dir)
 
-    builder = _init_builder(tgt_corpus, sentence_encoder)
+    builder = _init_builder(tgt_corpus, data_dir + "/annoy_index.ann", sentence_encoder)
     current_iteration = 0
     while True:
         print(f"Current iteration: {current_iteration}")
