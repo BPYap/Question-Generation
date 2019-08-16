@@ -1,3 +1,5 @@
+import os
+
 from annoy import AnnoyIndex
 from tqdm.auto import tqdm
 
@@ -24,17 +26,22 @@ class Builder:
         self.encoder = encoder
 
     def build_annoy_index(self):
-        print("Building annoy index...")
         self.annoy_index = AnnoyIndex(self.encoder.dimension, 'angular')
-        self.annoy_index.on_disk_build(self.annoy_index_path)
 
-        for starting_index in tqdm(range(0, len(self.target_sentences), _BATCH_SIZE)):
-            target_sentences = self.target_sentences[starting_index: starting_index + _BATCH_SIZE]
-            target_vectors = self.encoder.get_vectors(target_sentences)
-            for i, vector in enumerate(target_vectors, start=starting_index):
-                self.annoy_index.add_item(i, vector)
+        if os.path.exists(self.annoy_index_path):
+            print(f"Loading Annoy index from {self.annoy_index_path}...")
+            self.annoy_index.load(self.annoy_index_path, prefault=True)
+        else:
+            print("Building Annoy index...")
+            self.annoy_index.on_disk_build(self.annoy_index_path)
 
-        self.annoy_index.build(_N_TREES)
+            for starting_index in tqdm(range(0, len(self.target_sentences), _BATCH_SIZE)):
+                target_sentences = self.target_sentences[starting_index: starting_index + _BATCH_SIZE]
+                target_vectors = self.encoder.get_vectors(target_sentences)
+                for i, vector in enumerate(target_vectors, start=starting_index):
+                    self.annoy_index.add_item(i, vector)
+
+            self.annoy_index.build(_N_TREES)
 
     def get_most_similar_target(self, sentence, threshold=0):
         """ Return the most similar target sentence (in terms of cosine similarity) to the input sentence.

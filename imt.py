@@ -172,7 +172,7 @@ def main(config_path):
     model_dir = f"model/{experiment_name}"
     file_util.create_folder(model_dir)
 
-    builder = _init_builder(tgt_corpus, data_dir + "/annoy_index.ann", sentence_encoder)
+    builder = _init_builder(tgt_corpus, f"{data_dir}/{sentence_encoder}-annoy_index.ann", sentence_encoder)
     current_iteration = 0
     while True:
         print(f"Current iteration: {current_iteration}")
