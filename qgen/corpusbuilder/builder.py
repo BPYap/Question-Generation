@@ -58,7 +58,7 @@ class Builder:
 
         vector = self.encoder.get_vector(sentence)
         most_similar_index, distance = self.annoy_index.get_nns_by_vector(vector, 1, include_distances=True)
-        cosine_similarity_score = 1 - distance[0]
+        cosine_similarity_score = 0.5 * (2 - distance[0] ** 2)
 
         return self.target_sentences[most_similar_index[0]] if cosine_similarity_score >= threshold else None
 
