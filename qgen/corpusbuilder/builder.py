@@ -3,7 +3,7 @@ import os
 from annoy import AnnoyIndex
 from tqdm.auto import tqdm
 
-from ..util import nlp
+from ..util import file, nlp
 
 _BATCH_SIZE = 20000
 _N_TREES = 10
@@ -16,7 +16,7 @@ class Builder:
         :param target_path: path to target corpus
         :param annoy_index_path: path to store index built by annoy library
         """
-        self.target_sentences = self._read_unique_lines(target_path)
+        self.target_sentences = file.read_file(target_path, unique_lines=True)
         self.annoy_index_path = annoy_index_path
 
         self.encoder = None
@@ -81,18 +81,3 @@ class Builder:
         original_wmd = nlp.get_word_mover_dist(src, most_similar_original)
 
         return new_target if new_target_wmd < original_wmd else most_similar_original
-
-    @staticmethod
-    def _read_unique_lines(path):
-        print(f"Reading from {path}...")
-        lines = set()
-        with open(path, 'r', encoding='utf-8') as f:
-            for line in iter(f.readline, ''):
-                line = line.strip()
-                if len(line) == 0 or line in lines:
-                    continue
-                else:
-                    lines.add(line)
-
-        print(f"Successfully read {len(lines)} unique lines from {path}")
-        return list(lines)

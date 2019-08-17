@@ -21,15 +21,17 @@ def read_json(path):
     return data
 
 
-def read_file(path):
+def read_file(path, unique_lines=False):
     print(f"Reading from {path}...")
-    lines = list()
+    lines = dict()
     with open(path, 'r', encoding='utf-8') as f:
         for line in iter(f.readline, ''):
-            lines.append(line.strip())
+            line = line.strip()
+            if (unique_lines and line not in lines) or not unique_lines:
+                lines[line] = 1
 
     print(f"Read {len(lines)} lines from {path}")
-    return list(lines)
+    return list(lines.keys())
 
 
 def write_file(lines, path):

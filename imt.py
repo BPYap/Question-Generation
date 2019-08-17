@@ -1,5 +1,7 @@
 import argparse
+import math
 import subprocess
+import threading
 
 from tqdm.auto import tqdm
 
@@ -105,17 +107,47 @@ def _init_builder(target_path, annoy_index_path, encoder):
 
 def _bootstrap_parallel(builder, src_path, threshold, src_output_path, tgt_output_path):
     print("Bootstrapping pseudo-parallel corpus...")
+    source_sentences = file_util.read_file(src_path, unique_lines=True)
+
+    progress_bar = tqdm(total=len(source_sentences))
+    thread_lock = threading.Lock()
+
+    def run_thread(builder_, threshold_, batch_, update_dict):
+        nonlocal progress_bar
+        for source_sentence in batch_:
+            most_similar_sentence = builder_.get_most_similar_target(source_sentence, threshold_)
+
+            if most_similar_sentence is not None:
+                update_dict[source_sentence] = most_similar_sentence
+
+            with thread_lock:
+                progress_bar.update()
+
     pseudo_parallel_corpus = dict()
-    for src_sentence in tqdm(file_util.read_file(src_path)):
-        if src_sentence in pseudo_parallel_corpus:
-            continue
+    threads = list()
+    num_threads = 5
+    batch_size = math.ceil(len(source_sentences) / num_threads)
+    for i in range(0, len(source_sentences), batch_size):
+        batch = source_sentences[i:i + batch_size]
+        thread = threading.Thread(target=run_thread,
+                                  args=(builder, threshold, batch, pseudo_parallel_corpus))
+        threads.append(thread)
+        thread.start()
 
-        most_similar_sentence = builder.get_most_similar_target(src_sentence, threshold)
-        if most_similar_sentence is not None:
-            pseudo_parallel_corpus[src_sentence] = most_similar_sentence
+    for thread in threads:
+        thread.join()
 
-    file_util.write_file(pseudo_parallel_corpus.keys(), src_output_path)
-    file_util.write_file(pseudo_parallel_corpus.values(), tgt_output_path)
+    progress_bar.close()
+
+    # pseudo_parallel_corpus = dict()
+    # for source_sentence in tqdm(source_sentences):
+    #     most_similar_sentence = builder.get_most_similar_target(source_sentence, threshold)
+    #
+    #     if most_similar_sentence is not None:
+    #         pseudo_parallel_corpus[source_sentence] = most_similar_sentence
+
+    file_util.write_file(list(pseudo_parallel_corpus.keys()), src_output_path)
+    file_util.write_file(list(pseudo_parallel_corpus.values()), tgt_output_path)
 
 
 def _refine_parallel(builder, src_parallel_path, tgt_parallel_path, candidate_path, src_output_path, tgt_output_path):
@@ -125,14 +157,47 @@ def _refine_parallel(builder, src_parallel_path, tgt_parallel_path, candidate_pa
 
     candidates = file_util.read_json(candidate_path)
     pseudo_parallel_corpus = {src_sentences[i]: tgt_sentences[i] for i in range(len(src_sentences))}
-    refined_count = 0
-    for src_sentence, current_target in tqdm(pseudo_parallel_corpus.items()):
-        candidate = candidates[src_sentence][0]
-        refined_target = builder.get_refined_target(src_sentence, current_target, candidate)
 
-        if pseudo_parallel_corpus[src_sentence] != refined_target:
-            refined_count += 1
-            pseudo_parallel_corpus[src_sentence] = refined_target
+    progress_bar = tqdm(total=len(src_sentences))
+    refined_count = 0
+    thread_lock = threading.Lock()
+
+    def run_thread(builder_, src_batch_, tgt_batch_):
+        nonlocal progress_bar
+        nonlocal refined_count
+
+        for j in range(len(src_batch_)):
+            source_sentence = src_batch_[j]
+            current_target = tgt_batch_[j]
+
+            candidate = candidates[source_sentence][0]
+            refined_target = builder_.get_refined_target(source_sentence, current_target, candidate)
+
+            if pseudo_parallel_corpus[source_sentence] != refined_target:
+                with thread_lock:
+                    refined_count += 1
+
+                pseudo_parallel_corpus[source_sentence] = refined_target
+
+            with thread_lock:
+                progress_bar.update()
+
+    threads = list()
+    num_threads = 5
+    batch_size = math.ceil(len(src_sentences) / num_threads)
+    for i in range(0, len(src_sentences), batch_size):
+        src_batch = src_sentences[i:i + batch_size]
+        tgt_batch = tgt_sentences[i:i + batch_size]
+
+        thread = threading.Thread(target=run_thread,
+                                  args=(builder, src_batch, tgt_batch))
+        threads.append(thread)
+        thread.start()
+
+    for thread in threads:
+        thread.join()
+
+    progress_bar.close()
 
     file_util.write_file(pseudo_parallel_corpus.keys(), src_output_path)
     file_util.write_file(pseudo_parallel_corpus.values(), tgt_output_path)
