@@ -107,7 +107,7 @@ def _init_builder(target_path, annoy_index_path, encoder):
 
 def _bootstrap_parallel(builder, src_path, threshold, src_output_path, tgt_output_path):
     print("Bootstrapping pseudo-parallel corpus...")
-    source_sentences = file_util.read_file(src_path, unique_lines=True)
+    source_sentences = file_util.read_file(src_path, unique=True)
 
     progress_bar = tqdm(total=len(source_sentences))
     thread_lock = threading.Lock()

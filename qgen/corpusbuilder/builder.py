@@ -16,7 +16,7 @@ class Builder:
         :param target_path: path to target corpus
         :param annoy_index_path: path to store index built by annoy library
         """
-        self.target_sentences = file.read_file(target_path, unique_lines=True)
+        self.target_sentences = file.read_file(target_path, unique=True)
         self.annoy_index_path = annoy_index_path
 
         self.encoder = None
