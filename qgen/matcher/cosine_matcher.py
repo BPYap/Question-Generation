@@ -13,38 +13,36 @@ class CosineSimilarityMatcher:
     """ Match sentence with given target sentences based on cosine similarity of sentence embeddings
     """
 
-    def __init__(self, target_path, annoy_index_path):
+    def __init__(self, target_path, annoy_index_path, encoder):
         """ Initialize matcher with list of target sentences
 
         :param target_path: path to target corpus
         :param annoy_index_path: path to store index built by annoy library
+        :param encoder: encoder for the computation of sentence embeddings
         """
         self.target_sentences = file.read_file(target_path, unique=True)
-        self.annoy_index_path = annoy_index_path
-
-        self.encoder = None
-        self.annoy_index = None
-
-    def set_encoder(self, encoder):
         self.encoder = encoder
+        self.annoy_index = self._build_annoy_index(annoy_index_path)
 
-    def build_annoy_index(self):
-        self.annoy_index = AnnoyIndex(self.encoder.dimension, 'angular')
+    def _build_annoy_index(self, annoy_index_path):
+        annoy_index = AnnoyIndex(self.encoder.dimension, 'angular')
 
-        if os.path.exists(self.annoy_index_path):
-            print(f"Loading Annoy index from {self.annoy_index_path}...")
-            self.annoy_index.load(self.annoy_index_path, prefault=True)
+        if os.path.exists(annoy_index_path):
+            print(f"Loading Annoy index from {annoy_index_path}...")
+            annoy_index.load(annoy_index_path, prefault=True)
         else:
             print("Building Annoy index...")
-            self.annoy_index.on_disk_build(self.annoy_index_path)
+            annoy_index.on_disk_build(annoy_index_path)
 
             for starting_index in tqdm(range(0, len(self.target_sentences), _BATCH_SIZE)):
                 target_sentences = self.target_sentences[starting_index: starting_index + _BATCH_SIZE]
                 target_vectors = self.encoder.get_vectors(target_sentences)
                 for i, vector in enumerate(target_vectors, start=starting_index):
-                    self.annoy_index.add_item(i, vector)
+                    annoy_index.add_item(i, vector)
 
-            self.annoy_index.build(_N_TREES)
+            annoy_index.build(_N_TREES)
+
+        return annoy_index
 
     def get_most_similar_target(self, sentence, threshold=0):
         """ Return the most similar target sentence (in terms of cosine similarity) to the input sentence.

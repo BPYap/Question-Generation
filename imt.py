@@ -85,24 +85,20 @@ def _run_python_script(script, yaml_config):
     subprocess.run(command)
 
 
-def _init_matcher(target_path, annoy_index_path, encoder):
+def _init_matcher(target_path, annoy_index_path, encoder_name):
     pretrained_config = load_yaml_config("config/pretrained/encoder.yml")
     fasttext_path = pretrained_config['fasttext_model_path']
     glove_path = pretrained_config['glove_model_path']
     use_path = pretrained_config['use_model_path']
 
-    matcher = CosineSimilarityMatcher(target_path, annoy_index_path)
-
-    if encoder == 'fasttext':
-        matcher.set_encoder(FTEncoder(fasttext_path))
-    elif encoder == 'glove':
-        matcher.set_encoder(GloveEncoder(glove_path))
+    if encoder_name == 'fasttext':
+        encoder = FTEncoder(fasttext_path)
+    elif encoder_name == 'glove':
+        encoder = GloveEncoder(glove_path)
     else:
-        matcher.set_encoder(USEEncoder(use_path))
+        encoder = USEEncoder(use_path)
 
-    matcher.build_annoy_index()
-
-    return matcher
+    return CosineSimilarityMatcher(target_path, annoy_index_path, encoder)
 
 
 def _bootstrap_parallel(matcher, src_path, threshold, src_output_path, tgt_output_path):
