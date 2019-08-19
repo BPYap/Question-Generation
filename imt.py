@@ -6,7 +6,7 @@ import threading
 from tqdm.auto import tqdm
 
 import qgen.util.file as file_util
-from qgen.corpusbuilder.builder import Builder
+from qgen.matcher import CosineSimilarityMatcher
 from qgen.encoder.fasttext import FTEncoder
 from qgen.encoder.glove import GloveEncoder
 from qgen.encoder.universal_sentence_encoder import USEEncoder
@@ -85,37 +85,37 @@ def _run_python_script(script, yaml_config):
     subprocess.run(command)
 
 
-def _init_builder(target_path, annoy_index_path, encoder):
+def _init_matcher(target_path, annoy_index_path, encoder):
     pretrained_config = load_yaml_config("config/pretrained/encoder.yml")
     fasttext_path = pretrained_config['fasttext_model_path']
     glove_path = pretrained_config['glove_model_path']
     use_path = pretrained_config['use_model_path']
 
-    builder = Builder(target_path, annoy_index_path)
+    matcher = CosineSimilarityMatcher(target_path, annoy_index_path)
 
     if encoder == 'fasttext':
-        builder.set_encoder(FTEncoder(fasttext_path))
+        matcher.set_encoder(FTEncoder(fasttext_path))
     elif encoder == 'glove':
-        builder.set_encoder(GloveEncoder(glove_path))
+        matcher.set_encoder(GloveEncoder(glove_path))
     else:
-        builder.set_encoder(USEEncoder(use_path))
+        matcher.set_encoder(USEEncoder(use_path))
 
-    builder.build_annoy_index()
+    matcher.build_annoy_index()
 
-    return builder
+    return matcher
 
 
-def _bootstrap_parallel(builder, src_path, threshold, src_output_path, tgt_output_path):
+def _bootstrap_parallel(matcher, src_path, threshold, src_output_path, tgt_output_path):
     print("Bootstrapping pseudo-parallel corpus...")
     source_sentences = file_util.read_file(src_path, unique=True)
 
     progress_bar = tqdm(total=len(source_sentences))
     thread_lock = threading.Lock()
 
-    def run_thread(builder_, threshold_, batch_, update_dict):
+    def run_thread(matcher_, threshold_, batch_, update_dict):
         nonlocal progress_bar
         for source_sentence in batch_:
-            most_similar_sentence = builder_.get_most_similar_target(source_sentence, threshold_)
+            most_similar_sentence = matcher_.get_most_similar_target(source_sentence, threshold_)
 
             if most_similar_sentence is not None:
                 update_dict[source_sentence] = most_similar_sentence
@@ -130,7 +130,7 @@ def _bootstrap_parallel(builder, src_path, threshold, src_output_path, tgt_outpu
     for i in range(0, len(source_sentences), batch_size):
         batch = source_sentences[i:i + batch_size]
         thread = threading.Thread(target=run_thread,
-                                  args=(builder, threshold, batch, pseudo_parallel_corpus))
+                                  args=(matcher, threshold, batch, pseudo_parallel_corpus))
         threads.append(thread)
         thread.start()
 
@@ -141,7 +141,7 @@ def _bootstrap_parallel(builder, src_path, threshold, src_output_path, tgt_outpu
 
     # pseudo_parallel_corpus = dict()
     # for source_sentence in tqdm(source_sentences):
-    #     most_similar_sentence = builder.get_most_similar_target(source_sentence, threshold)
+    #     most_similar_sentence = matcher.get_most_similar_target(source_sentence, threshold)
     #
     #     if most_similar_sentence is not None:
     #         pseudo_parallel_corpus[source_sentence] = most_similar_sentence
@@ -150,7 +150,7 @@ def _bootstrap_parallel(builder, src_path, threshold, src_output_path, tgt_outpu
     file_util.write_file(list(pseudo_parallel_corpus.values()), tgt_output_path)
 
 
-def _refine_parallel(builder, src_parallel_path, tgt_parallel_path, candidate_path, src_output_path, tgt_output_path):
+def _refine_parallel(matcher, src_parallel_path, tgt_parallel_path, candidate_path, src_output_path, tgt_output_path):
     print("Refinining pseudo-parallel corpus...")
     src_sentences = file_util.read_file(src_parallel_path)
     tgt_sentences = file_util.read_file(tgt_parallel_path)
@@ -162,7 +162,7 @@ def _refine_parallel(builder, src_parallel_path, tgt_parallel_path, candidate_pa
     refined_count = 0
     thread_lock = threading.Lock()
 
-    def run_thread(builder_, src_batch_, tgt_batch_):
+    def run_thread(matcher_, src_batch_, tgt_batch_):
         nonlocal progress_bar
         nonlocal refined_count
 
@@ -171,7 +171,7 @@ def _refine_parallel(builder, src_parallel_path, tgt_parallel_path, candidate_pa
             current_target = tgt_batch_[j]
 
             candidate = candidates[source_sentence][0]
-            refined_target = builder_.get_refined_target(source_sentence, current_target, candidate)
+            refined_target = matcher_.get_refined_target(source_sentence, current_target, candidate)
 
             if pseudo_parallel_corpus[source_sentence] != refined_target:
                 with thread_lock:
@@ -190,7 +190,7 @@ def _refine_parallel(builder, src_parallel_path, tgt_parallel_path, candidate_pa
         tgt_batch = tgt_sentences[i:i + batch_size]
 
         thread = threading.Thread(target=run_thread,
-                                  args=(builder, src_batch, tgt_batch))
+                                  args=(matcher, src_batch, tgt_batch))
         threads.append(thread)
         thread.start()
 
@@ -237,7 +237,7 @@ def main(config_path):
     model_dir = f"model/{experiment_name}"
     file_util.create_folder(model_dir)
 
-    builder = _init_builder(tgt_corpus, f"{data_dir}/{sentence_encoder}-annoy_index.ann", sentence_encoder)
+    matcher = _init_matcher(tgt_corpus, f"{data_dir}/{sentence_encoder}-annoy_index.ann", sentence_encoder)
     current_iteration = 0
     while True:
         print(f"Current iteration: {current_iteration}")
@@ -253,7 +253,7 @@ def main(config_path):
             # Bootstrap pseudo-parallel corpus
             source_output_path = f"{sub_data_dir}/{PARALLEL_SOURCE}"
             target_output_path = f"{sub_data_dir}/{PARALLEL_TARGET}"
-            _bootstrap_parallel(builder, src_corpus, similarity_threshold, source_output_path, target_output_path)
+            _bootstrap_parallel(matcher, src_corpus, similarity_threshold, source_output_path, target_output_path)
         else:
             # Refine pseudo-parallel corpus
             source_parallel_path = f"{prev_sub_data_dir}/{PARALLEL_SOURCE}"
@@ -262,7 +262,7 @@ def main(config_path):
             source_output_path = f"{sub_data_dir}/{PARALLEL_SOURCE}"
             target_output_path = f"{sub_data_dir}/{PARALLEL_TARGET}"
 
-            update_rate = _refine_parallel(builder, source_parallel_path, target_parallel_path, candidate_json_path,
+            update_rate = _refine_parallel(matcher, source_parallel_path, target_parallel_path, candidate_json_path,
                                            source_output_path, target_output_path)
 
             if update_rate < min_update_rate:

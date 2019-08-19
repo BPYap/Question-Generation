@@ -9,9 +9,12 @@ _BATCH_SIZE = 20000
 _N_TREES = 10
 
 
-class Builder:
+class CosineSimilarityMatcher:
+    """ Match sentence with given target sentences based on cosine similarity of sentence embeddings
+    """
+
     def __init__(self, target_path, annoy_index_path):
-        """ Initialize parallel corpus builder
+        """ Initialize matcher with list of target sentences
 
         :param target_path: path to target corpus
         :param annoy_index_path: path to store index built by annoy library
