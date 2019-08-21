@@ -204,7 +204,7 @@ def _refine_parallel(matcher, src_parallel_path, tgt_parallel_path, candidate_pa
     return update_rate
 
 
-def main(config_path):
+def main(config_path, starting_iteration=0):
     experiment_name = file_util.get_filename(config_path).split('.')[0]
     yaml_config = load_yaml_config(config_path)
 
@@ -234,7 +234,7 @@ def main(config_path):
     file_util.create_folder(model_dir)
 
     matcher = _init_matcher(tgt_corpus, f"{data_dir}/{sentence_encoder}-annoy_index.ann", sentence_encoder)
-    current_iteration = 0
+    current_iteration = starting_iteration
     while True:
         print(f"Current iteration: {current_iteration}")
         # Create sub-folder `<current_iteration>` under `data_dir`
@@ -287,6 +287,7 @@ def main(config_path):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("config", help="Configuration file (.yml) for all scripts")
+    parser.add_argument("iteration", type=int, default=0, help="Continue at specific iteration")
     args = parser.parse_args()
 
-    main(args.config)
+    main(args.config, starting_iteration=args.iteration)
