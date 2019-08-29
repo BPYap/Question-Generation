@@ -2,33 +2,25 @@ import string
 from itertools import product
 
 import numpy as np
-import nltk
 from nltk.corpus import stopwords
 from nltk.corpus import wordnet as wn
-from scipy.special import softmax
+from tqdm import tqdm
 
-from qgen.util.nlp import get_spacy_model, tokenize
-
-try:
-    nltk.data.find("corpora/stopwords")
-except LookupError:
-    nltk.download('stopwords')
-try:
-    nltk.data.find("corpora/wordnet")
-except LookupError:
-    nltk.download('wordnet')
+from .base import BaseGenerator
+from ..util.nlp import get_spacy_model, tokenize
 
 
-class SynonymSubstitutionGenerator:
-    """ Generate questions via synonyms (sense-disambiguated) substitution. """
+class SymSubGenerator(BaseGenerator):
+    """ Generate questions via sense-disambiguated synonyms substitution. """
 
     def __init__(self, encoder, discount_factor=0.5, threshold=0.5):
-        """ Initialize generator
-
+        """
         :param encoder: encoder for the computation of sentence embeddings
         :param discount_factor: discount factor for weightage calculation during word sense disambiguation (wsd)
         :param threshold: threshold value ranging from 0 to 1 for wsd score.
         """
+        super().__init__("Sense-disambiguated Synonym Substitution")
+
         self.discount_factor = discount_factor
         self.threshold = threshold
         self.encoder = encoder
@@ -101,7 +93,7 @@ class SynonymSubstitutionGenerator:
 
         sense_count = len(results)
         results = [(l.key(), s * ((l.count() + 1) / (lemma_count + sense_count))) for l, s in results]
-        print(sorted(results, key=lambda r: r[1], reverse=True))
+        # print(sorted(results, key=lambda r: r[1], reverse=True))
         return sorted(results, key=lambda r: r[1], reverse=True)[0][0]
 
     def _get_synonyms(self, sentence, word):
@@ -145,5 +137,13 @@ class SynonymSubstitutionGenerator:
                 temp[temp.index(key)] = sub_token
 
             result.append(' '.join(temp))
+
+        return result
+
+    def batch_generate(self, sentences):
+        print(f"Generating questions via {self.name}...")
+        result = dict()
+        for sentence in tqdm(sentences):
+            result[sentence] = self.generate(sentence)
 
         return result

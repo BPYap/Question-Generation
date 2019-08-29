@@ -47,10 +47,55 @@ python setup.py install
 Change to the root directory `Question-Generation/` and follow the instructions at this [link](http://opennmt.net/OpenNMT-py/main.html#installation).
 
 ## Usage
-### Training Iterative Matching and Translation Model
-To execute the Iterative Matching and Translation (IMT) training pipeline:
+### Generate Questions
+[To be added]
+
+### Demo Script
 ```
-python imt_train.py config_file_path
+python script/generation_demo.py
+```
+
+Example output:
+```
+Initializing...
+...
+...
+...
+Enter a sentence/question: menu
+Choose a generation method:
+        1. Rule-based Pattern Matching
+        2. Sense-disambiguated Synonym Substitution
+        3. IMT Style Transfer Model
+        4. Zero-shot Machine Translation Model
+        5. Easy Data Augmentation (EDA)
+> 2
+Enter a sentence/question: Is it compulsory to attend lecture?
+
+Generated questions:
+1. Is it compulsory to attend lecture ?
+2. Is it compulsory to attend public lecture ?
+3. Is it compulsory to attend talk ?
+4. Is it compulsory to go to lecture ?
+5. Is it compulsory to go to public lecture ?
+6. Is it compulsory to go to talk ?
+7. Is it mandatory to attend lecture ?
+8. Is it mandatory to attend public lecture ?
+9. Is it mandatory to attend talk ?
+10. Is it mandatory to go to lecture ?
+11. Is it mandatory to go to public lecture ?
+12. Is it mandatory to go to talk ?
+13. Is it required to attend lecture ?
+14. Is it required to attend public lecture ?
+15. Is it required to attend talk ?
+16. Is it required to go to lecture ?
+17. Is it required to go to public lecture ?
+18. Is it required to go to talk ?
+====================================================================================================
+```
+
+### Training text style transfer model via Iterative Matching and Translation (IMT)
+```
+python script/imt_train.py config/experiments/sample.yml
 ```
 
 #### Configuration file
@@ -78,9 +123,13 @@ There are in total 6 types of configuration parameter:
  
 ##### translate
  - Refer to http://opennmt.net/OpenNMT-py/options/translate.html
- 
-### Demo Script
-[To be added]
 
-## Acknowledgements/References
-[To be added]
+## References
+- Mikolov, Tomas, et al. "Advances in pre-training distributed word representations." arXiv preprint arXiv:1712.09405 (2017).
+- Pennington, Jeffrey, Richard Socher, and Christopher Manning. "Glove: Global vectors for word representation." Proceedings of the 2014 conference on empirical methods in natural language processing (EMNLP). 2014.
+- Cer, Daniel, et al. "Universal sentence encoder." arXiv preprint arXiv:1803.11175 (2018).
+- Buck, Christian, et al. "Ask the right questions: Active question reformulation with reinforcement learning." arXiv preprint arXiv:1705.07830 (2017).
+- Jin, Zhijing, et al. "Unsupervised Text Style Transfer via Iterative Matching and Translation." arXiv preprint arXiv:1901.11333 (2019).
+- Wei, Jason W., and Kai Zou. "Eda: Easy data augmentation techniques for boosting performance on text classification tasks." arXiv preprint arXiv:1901.11196 (2019).
+- Klein, Guillaume, et al. "OpenNMT: Neural Machine Translation Toolkit." arXiv preprint arXiv:1805.11462 (2018).
+- Miller, George A. WordNet: An electronic lexical database. MIT press, 1998.
