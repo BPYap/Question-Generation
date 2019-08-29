@@ -3,24 +3,24 @@ import os
 from annoy import AnnoyIndex
 from tqdm.auto import tqdm
 
-from ..util import file, nlp
+from .util import file
 
 _BATCH_SIZE = 20000
 _N_TREES = 10
 
 
-class CosineSimilarityMatcher:
-    """ Match sentence with given target sentences based on cosine similarity of sentence embeddings
+class Corpus:
+    """ Container for raw sentences, sentence encoder and Annoy indexer
     """
 
-    def __init__(self, target_path, annoy_index_path, encoder):
-        """ Initialize matcher with list of target sentences
+    def __init__(self, corpus_path, annoy_index_path, encoder):
+        """ Initialize corpus with list of sentences
 
-        :param target_path: path to target corpus
-        :param annoy_index_path: path to store index built by annoy library
-        :param encoder: encoder for the computation of sentence embeddings
+        :param corpus_path: path to corpus where each line corresponds to a single sentence
+        :param annoy_index_path: path where Annoy index will be/is saved
+        :param encoder: encoder object inherited from BaseEncoder class
         """
-        self.target_sentences = file.read_file(target_path, unique=True)
+        self.target_sentences = file.read_file(corpus_path, unique=True)
         self.encoder = encoder
         self.annoy_index = self._build_annoy_index(annoy_index_path)
 
@@ -44,10 +44,10 @@ class CosineSimilarityMatcher:
 
         return annoy_index
 
-    def get_most_similar_target(self, sentence, threshold=0):
-        """ Return the most similar target sentence (in terms of cosine similarity) to the input sentence.
+    def get_most_similar_sentence(self, sentence, threshold=0):
+        """ Return the most similar sentence (in terms of cosine similarity) from corpus given an input sentence.
         If threshold is specified, only return the most similar sentence if its cosine similarity score
-        exceed the threshold value, else return None
+        exceed the threshold value, otherwise return None
 
         :param sentence: input sentence
         :param threshold: cosine similarity threshold for the returned sentence
@@ -62,23 +62,3 @@ class CosineSimilarityMatcher:
         cosine_similarity_score = 0.5 * (2 - distance[0] ** 2)
 
         return self.target_sentences[most_similar_index[0]] if cosine_similarity_score >= threshold else None
-
-    def get_refined_target(self, src, current_tgt, candidate_tgt):
-        """ Refine a pair of pseudo-parallel sentences.
-
-        :param src: source sentence
-        :param current_tgt: target sentence currently matched with `src`
-        :param candidate_tgt: candidate sentence to replace `current_tgt`
-
-        :return refined target sentence
-        """
-        current_wmd = nlp.get_word_mover_dist(src, current_tgt)
-        candidate_wmd = nlp.get_word_mover_dist(src, candidate_tgt)
-
-        new_target, new_target_wmd = (current_tgt, current_wmd) if current_wmd < candidate_wmd \
-            else (candidate_tgt, candidate_wmd)
-
-        most_similar_original = self.get_most_similar_target(new_target)
-        original_wmd = nlp.get_word_mover_dist(src, most_similar_original)
-
-        return new_target if new_target_wmd < original_wmd else most_similar_original

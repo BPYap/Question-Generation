@@ -4,8 +4,8 @@ import importlib
 import os
 import sys
 
-abs_path = os.path.dirname(os.path.realpath(__file__))
-sys.path.insert(0, os.path.join(abs_path, 'OpenNMT-py'))
+root_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+sys.path.insert(0, os.path.join(root_path, 'OpenNMT-py'))
 
 opts = importlib.import_module('onmt.opts')
 build_translator = importlib.import_module('onmt.translate.translator').build_translator

@@ -1,16 +1,27 @@
 import argparse
 import math
+import os
 import subprocess
 import threading
 
 from tqdm.auto import tqdm
 
 import qgen.util.file as file_util
-from qgen.matcher import CosineSimilarityMatcher
+import qgen.util.nlp as nlp_util
+from qgen.corpus import Corpus
 from qgen.encoder.fasttext import FTEncoder
 from qgen.encoder.glove import GloveEncoder
 from qgen.encoder.universal_sentence_encoder import USEEncoder
 from qgen.util.config import load_yaml_config
+
+ROOT_PATH = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+PRETRAINED_CONFIG_PATH = os.path.join(ROOT_PATH, "config/pretrained/encoder.yml")
+
+PREPARE_DATASET_SCRIPT = os.path.join(ROOT_PATH, 'script/utility/prepare_dataset.py')
+PREPROCESS_SCRIPT = os.path.join(ROOT_PATH, 'OpenNMT-py/preprocess.py')
+TRAIN_SCRIPT = os.path.join(ROOT_PATH, 'OpenNMT-py/train.py')
+TRANSLATE_SCRIPT = os.path.join(ROOT_PATH, 'OpenNMT-py/translate.py')
+FORMAT_OUTPUT_SCRIPT = os.path.join(ROOT_PATH, 'script/utility/format_output.py')
 
 PARALLEL_SOURCE = 'parallel_source.txt'
 PARALLEL_TARGET = 'parallel_tgt.txt'
@@ -43,13 +54,13 @@ FILE_ARGS = {
 }
 
 
-def _process_data_path(sub_data_dir, yaml_config):
+def _resolve_data_path(yaml_config, sub_data_dir):
     # Convert file name of data files to relative path
     for arg_name, file_name in FILE_ARGS.items():
         yaml_config[arg_name] = f"{sub_data_dir}/{file_name}"
 
 
-def _process_model_path(model_dir, iteration, yaml_config):
+def _resolve_model_path(yaml_config, model_dir, iteration):
     # Add `train-save_model`
     model_name = f"{model_dir}/{iteration}-onmt_model"
     yaml_config["train-save_model"] = model_name
@@ -85,11 +96,11 @@ def _run_python_script(script, yaml_config):
     subprocess.run(command)
 
 
-def _init_matcher(target_path, annoy_index_path, encoder_name):
-    pretrained_config = load_yaml_config("config/pretrained/encoder.yml")
-    fasttext_path = pretrained_config['fasttext_model_path']
-    glove_path = pretrained_config['glove_model_path']
-    use_path = pretrained_config['use_model_path']
+def _init_corpus(target_path, annoy_index_path, encoder_name):
+    pretrained_config = load_yaml_config(PRETRAINED_CONFIG_PATH)
+    fasttext_path = os.path.join(ROOT_PATH, pretrained_config['fasttext_model_path'])
+    glove_path = os.path.join(ROOT_PATH, pretrained_config['glove_model_path'])
+    use_path = os.path.join(ROOT_PATH, pretrained_config['use_model_path'])
 
     if encoder_name == 'fasttext':
         encoder = FTEncoder(fasttext_path)
@@ -98,20 +109,20 @@ def _init_matcher(target_path, annoy_index_path, encoder_name):
     else:
         encoder = USEEncoder(use_path)
 
-    return CosineSimilarityMatcher(target_path, annoy_index_path, encoder)
+    return Corpus(target_path, annoy_index_path, encoder)
 
 
-def _bootstrap_parallel(matcher, src_path, threshold, src_output_path, tgt_output_path):
+def _bootstrap_parallel(corpus, src_path, threshold, src_output_path, tgt_output_path):
     print("Bootstrapping pseudo-parallel corpus...")
     source_sentences = file_util.read_file(src_path, unique=True)
 
     progress_bar = tqdm(total=len(source_sentences))
     thread_lock = threading.Lock()
 
-    def run_thread(matcher_, threshold_, batch_, update_dict):
+    def run_thread(corpus_, threshold_, batch_, update_dict):
         nonlocal progress_bar
         for source_sentence in batch_:
-            most_similar_sentence = matcher_.get_most_similar_target(source_sentence, threshold_)
+            most_similar_sentence = corpus_.get_most_similar_sentence(source_sentence, threshold_)
 
             if most_similar_sentence is not None:
                 update_dict[source_sentence] = most_similar_sentence
@@ -126,7 +137,7 @@ def _bootstrap_parallel(matcher, src_path, threshold, src_output_path, tgt_outpu
     for i in range(0, len(source_sentences), batch_size):
         batch = source_sentences[i:i + batch_size]
         thread = threading.Thread(target=run_thread,
-                                  args=(matcher, threshold, batch, pseudo_parallel_corpus))
+                                  args=(corpus, threshold, batch, pseudo_parallel_corpus))
         threads.append(thread)
         thread.start()
 
@@ -135,19 +146,27 @@ def _bootstrap_parallel(matcher, src_path, threshold, src_output_path, tgt_outpu
 
     progress_bar.close()
 
-    # pseudo_parallel_corpus = dict()
-    # for source_sentence in tqdm(source_sentences):
-    #     most_similar_sentence = matcher.get_most_similar_target(source_sentence, threshold)
-    #
-    #     if most_similar_sentence is not None:
-    #         pseudo_parallel_corpus[source_sentence] = most_similar_sentence
-
     file_util.write_file(list(pseudo_parallel_corpus.keys()), src_output_path)
     file_util.write_file(list(pseudo_parallel_corpus.values()), tgt_output_path)
 
 
-def _refine_parallel(matcher, src_parallel_path, tgt_parallel_path, candidate_path, src_output_path, tgt_output_path):
+def _refine_parallel(corpus, src_parallel_path, tgt_parallel_path, candidate_path, src_output_path, tgt_output_path):
     print("Refinining pseudo-parallel corpus...")
+
+    def get_refined_target(src, current_tgt, candidate_tgt):
+        """ Refine a pair of pseudo-parallel sentences.
+        """
+        current_wmd = nlp_util.get_word_mover_dist(src, current_tgt)
+        candidate_wmd = nlp_util.get_word_mover_dist(src, candidate_tgt)
+
+        new_target, new_target_wmd = (current_tgt, current_wmd) if current_wmd < candidate_wmd \
+            else (candidate_tgt, candidate_wmd)
+
+        most_similar_original = corpus.get_most_similar_sentence(new_target)
+        original_wmd = nlp_util.get_word_mover_dist(src, most_similar_original)
+
+        return new_target if new_target_wmd < original_wmd else most_similar_original
+
     src_sentences = file_util.read_file(src_parallel_path)
     tgt_sentences = file_util.read_file(tgt_parallel_path)
 
@@ -158,7 +177,7 @@ def _refine_parallel(matcher, src_parallel_path, tgt_parallel_path, candidate_pa
     refined_count = 0
     thread_lock = threading.Lock()
 
-    def run_thread(matcher_, src_batch_, tgt_batch_):
+    def run_thread(src_batch_, tgt_batch_):
         nonlocal progress_bar
         nonlocal refined_count
 
@@ -167,7 +186,7 @@ def _refine_parallel(matcher, src_parallel_path, tgt_parallel_path, candidate_pa
             current_target = tgt_batch_[j]
 
             candidate = candidates[source_sentence][0]
-            refined_target = matcher_.get_refined_target(source_sentence, current_target, candidate)
+            refined_target = get_refined_target(source_sentence, current_target, candidate)
 
             if pseudo_parallel_corpus[source_sentence] != refined_target:
                 with thread_lock:
@@ -186,7 +205,7 @@ def _refine_parallel(matcher, src_parallel_path, tgt_parallel_path, candidate_pa
         tgt_batch = tgt_sentences[i:i + batch_size]
 
         thread = threading.Thread(target=run_thread,
-                                  args=(matcher, src_batch, tgt_batch))
+                                  args=(src_batch, tgt_batch))
         threads.append(thread)
         thread.start()
 
@@ -218,38 +237,31 @@ def main(config_path, starting_iteration=0):
     # Set the `num_sent` argument for `format_output.py`
     yaml_config['format_output-num_sent'] = yaml_config['translate-n_best']
 
-    # Path to other scripts
-    prepare_dataset = 'script/utility/prepare_dataset.py'
-    preprocess = 'OpenNMT-py/preprocess.py'
-    train = 'OpenNMT-py/train.py'
-    translate = 'OpenNMT-py/translate.py'
-    format_output = 'script/utility/format_output.py'
-
     # Create new folder `<experiment_name>` under `data/output/`
-    data_dir = f"data/imt/{experiment_name}"
+    data_dir = os.path.join(ROOT_PATH, f"data/imt/{experiment_name}")
     file_util.create_folder(data_dir)
 
     # Create new folder `<experiment_name>` under `model/`
-    model_dir = f"model/{experiment_name}"
+    model_dir = os.path.join(ROOT_PATH, f"model/{experiment_name}")
     file_util.create_folder(model_dir)
 
-    matcher = _init_matcher(tgt_corpus, f"{data_dir}/{sentence_encoder}-annoy_index.ann", sentence_encoder)
+    corpus = _init_corpus(tgt_corpus, f"{data_dir}/{sentence_encoder}-annoy_index.ann", sentence_encoder)
     current_iteration = starting_iteration
     while True:
         print(f"Current iteration: {current_iteration}")
         # Create sub-folder `<current_iteration>` under `data_dir`
-        prev_sub_data_dir = f"{data_dir}/{current_iteration - 1}"
+        prev_sub_data_dir = os.path.join(ROOT_PATH, f"{data_dir}/{current_iteration - 1}")
         sub_data_dir = f"{data_dir}/{current_iteration}"
         file_util.create_folder(sub_data_dir)
 
-        _process_data_path(sub_data_dir, yaml_config)
-        _process_model_path(model_dir, current_iteration, yaml_config)
+        _resolve_data_path(yaml_config, sub_data_dir)
+        _resolve_model_path(yaml_config, model_dir, current_iteration)
 
         if current_iteration == 0:
             # Bootstrap pseudo-parallel corpus
             source_output_path = f"{sub_data_dir}/{PARALLEL_SOURCE}"
             target_output_path = f"{sub_data_dir}/{PARALLEL_TARGET}"
-            _bootstrap_parallel(matcher, src_corpus, similarity_threshold, source_output_path, target_output_path)
+            _bootstrap_parallel(corpus, src_corpus, similarity_threshold, source_output_path, target_output_path)
         else:
             # Refine pseudo-parallel corpus
             source_parallel_path = f"{prev_sub_data_dir}/{PARALLEL_SOURCE}"
@@ -258,7 +270,7 @@ def main(config_path, starting_iteration=0):
             source_output_path = f"{sub_data_dir}/{PARALLEL_SOURCE}"
             target_output_path = f"{sub_data_dir}/{PARALLEL_TARGET}"
 
-            update_rate = _refine_parallel(matcher, source_parallel_path, target_parallel_path, candidate_json_path,
+            update_rate = _refine_parallel(corpus, source_parallel_path, target_parallel_path, candidate_json_path,
                                            source_output_path, target_output_path)
 
             if update_rate < min_update_rate:
@@ -267,19 +279,19 @@ def main(config_path, starting_iteration=0):
                 exit(1)
 
         print("Splitting data set...")
-        _run_python_script(prepare_dataset, yaml_config)
+        _run_python_script(PREPARE_DATASET_SCRIPT, yaml_config)
 
         print("Pre-processing data set...")
-        _run_python_script(preprocess, yaml_config)
+        _run_python_script(PREPROCESS_SCRIPT, yaml_config)
 
         print("Training neural machine translation model...")
-        _run_python_script(train, yaml_config)
+        _run_python_script(TRAIN_SCRIPT, yaml_config)
 
         print("Translating...")
-        _run_python_script(translate, yaml_config)
+        _run_python_script(TRANSLATE_SCRIPT, yaml_config)
 
         print("Formatting output...")
-        _run_python_script(format_output, yaml_config)
+        _run_python_script(FORMAT_OUTPUT_SCRIPT, yaml_config)
 
         current_iteration += 1
 
@@ -287,7 +299,7 @@ def main(config_path, starting_iteration=0):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("config", help="Configuration file (.yml) for all scripts")
-    parser.add_argument("iteration", type=int, default=0, help="Continue at specific iteration")
+    parser.add_argument("iteration", type=int, nargs='?', default=0, help="Continue at specific iteration")
     args = parser.parse_args()
 
     main(args.config, starting_iteration=args.iteration)

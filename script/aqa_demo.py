@@ -3,8 +3,8 @@ import importlib
 import os
 import sys
 
-abs_path = os.path.dirname(os.path.realpath(__file__))
-sys.path.insert(0, os.path.join(abs_path, 'active-qa'))
+root_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+sys.path.insert(0, os.path.join(root_path, 'active-qa'))
 
 reformulator = importlib.import_module('px.nmt.reformulator')
 reformulator_pb2 = importlib.import_module('px.proto.reformulator_pb2')
