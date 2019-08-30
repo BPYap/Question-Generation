@@ -1,6 +1,7 @@
 import os
 
 from qgen.encoder.universal_sentence_encoder import USEEncoder
+from qgen.generator.eda import EDAGenerator
 from qgen.generator.imt import IMTGenerator
 from qgen.generator.symsub import SymSubGenerator
 from qgen.generator.zeroshot import ZeroShotGenerator
@@ -20,6 +21,7 @@ def main():
     symsub = SymSubGenerator(USEEncoder(USE_PATH))
     imt = IMTGenerator(ONMT_PATH, IMT_PATH, 5)
     zeroshot = ZeroShotGenerator(AQA_PATH, AQA_CONFIG_PATH, AQA_MODEL_PATH)
+    eda = EDAGenerator()
 
     generator = None
     while True:
@@ -41,7 +43,7 @@ def main():
             elif choice == 4:
                 generator = zeroshot
             elif choice == 5:
-                generator = None
+                generator = eda
             else:
                 print("Unknown option. Please try again.")
         else:
