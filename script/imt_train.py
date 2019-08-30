@@ -162,7 +162,7 @@ def _refine_parallel(corpus, src_parallel_path, tgt_parallel_path, candidate_pat
         new_target, new_target_wmd = (current_tgt, current_wmd) if current_wmd < candidate_wmd \
             else (candidate_tgt, candidate_wmd)
 
-        most_similar_original = corpus.get_most_similar_sentence(new_target)
+        most_similar_original = corpus.get_most_similar_sentence(new_target, threshold=0)
         original_wmd = nlp_util.get_word_mover_dist(src, most_similar_original)
 
         return new_target if new_target_wmd < original_wmd else most_similar_original
