@@ -1,10 +1,7 @@
 import os
 
 from qgen.encoder.universal_sentence_encoder import USEEncoder
-from qgen.generator.eda import EDAGenerator
-from qgen.generator.imt import IMTGenerator
-from qgen.generator.symsub import SymSubGenerator
-from qgen.generator.zeroshot import ZeroShotGenerator
+from qgen.generator import SymSubGenerator, IMTGenerator,  ZeroShotGenerator, EDAGenerator
 
 ROOT_PATH = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
