@@ -1,7 +1,7 @@
 import os
 
 from qgen.encoder.universal_sentence_encoder import USEEncoder
-from qgen.generator import SymSubGenerator, IMTGenerator,  ZeroShotGenerator, EDAGenerator
+from qgen.generator import FPMGenerator, SymSubGenerator, IMTGenerator, ZeroShotGenerator, EDAGenerator
 
 ROOT_PATH = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
@@ -15,6 +15,7 @@ USE_PATH = os.path.join(ROOT_PATH, 'model/pretrained/universal_sentence_encoder'
 
 def main():
     print("Initializing...")
+    fpm = FPMGenerator()
     symsub = SymSubGenerator(USEEncoder(USE_PATH))
     imt = IMTGenerator(ONMT_PATH, IMT_PATH, 5)
     zeroshot = ZeroShotGenerator(AQA_PATH, AQA_CONFIG_PATH, AQA_MODEL_PATH)
@@ -32,7 +33,7 @@ def main():
             choice = int(input("> "))
 
             if choice == 1:
-                generator = None
+                generator = fpm
             elif choice == 2:
                 generator = symsub
             elif choice == 3:
