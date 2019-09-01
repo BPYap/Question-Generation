@@ -2,7 +2,7 @@ import string
 
 import en_core_web_md
 import spacy
-import wmd
+import numpy as wmd
 
 _spacy_cache = None
 _spacy_wmd_cache = None
@@ -132,6 +132,18 @@ def get_word_mover_dist(sentence1, sentence2):
 def get_ngrams(sentence, n):
     temp = sentence.split()
     return [' '.join(temp[i:i + n]) for i in range(len(temp) - n + 1)]
+
+
+def replace_punct(sentence, replace_with="", ignore_list=""):
+    """ Replace punctuation in `sentence` with tokens specified by `replace_with`.
+    """
+    punct = string.punctuation
+    for symbol in ignore_list:
+        punct = punct.replace(symbol, '')
+    if replace_with:
+        return sentence.translate(str.maketrans(punct, replace_with * len(punct)))
+    else:
+        return sentence.translate(str.maketrans('', '', punct))
 
 
 def convert_contradiction(sentence):

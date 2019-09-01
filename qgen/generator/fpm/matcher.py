@@ -16,6 +16,51 @@ class MatchedResult:
         self.tokens = self._parse_tokens(match.string, pattern, match)
 
     @staticmethod
+    def _get_first_verb_offset(sentence, starting_offset=0):
+        """ Return character offset for the first encountered verb
+        """
+        spacy_nlp = nlp.get_spacy_model()
+        doc = spacy_nlp(sentence)
+        for token in doc:
+            if token.idx < starting_offset:
+                continue
+            # single verb or adverb-verb pair
+            elif token.pos_ == 'VERB' or (
+                    token.tag_ == 'RB' and (token.i + 1 < len(doc) and doc[token.i + 1].pos_ == 'VERB')
+            ):
+                return token.idx
+
+        return -1
+
+    @staticmethod
+    def _is_subj(sentence, substr):
+        """ Returns True if `substr` in `sentence` is a noun chunk and its syntactic dependency tag is nominal subject
+        """
+        # remove punctuations to make things easier
+        sentence = " ".join(nlp.replace_punct(sentence, replace_with=" ", ignore_list="-").strip().split())
+        substr = " ".join(nlp.replace_punct(substr, replace_with=" ", ignore_list="-").strip().split())
+        spacy_nlp = nlp.get_spacy_model()
+        doc = spacy_nlp(sentence)
+        temp = []
+        sbj_tags = ['nsubj', 'nsubjpass']
+        previous_dep = None
+        for chunk in doc.noun_chunks:
+            if chunk.text == substr and chunk.root.dep_ in sbj_tags:
+                return True
+            elif chunk.text in nlp.get_ngrams(substr, len(chunk.text.split())):
+                # sometimes the subject might be combination of chunks, so we're keeping this chunk for later
+                # *Note: Consecutive subject chunk is discarded since they are two separate and not related noun chunks.
+                # (i.e. If they belongs to same chunk, they'd be grouped together as a chunk, not as 2 separate chunks)
+                if not (previous_dep in sbj_tags and chunk.root.dep_ in sbj_tags):
+                    temp.append(chunk.text)
+                    previous_dep = chunk.root.dep_
+
+        if temp and substr.startswith(temp[0]) and substr.endswith(temp[-1]):
+            return True
+
+        return False
+
+    @staticmethod
     def _parse_tokens(sentence, pattern, match):
         tokens = defaultdict(list)
         for t in SPECIAL_TOKENS:
@@ -37,7 +82,7 @@ class MatchedResult:
                 sub_sentence = " ".join(pair)
                 verb_offset = MatchedResult._get_first_verb_offset(sentence, sentence.index(sub_sentence))
                 if verb_offset == -1:
-                    tokens = None
+                    tokens = defaultdict(list)
                     break
                 second = sentence[verb_offset:sentence.index(sub_sentence) + len(sub_sentence)]
                 first = sub_sentence[:sub_sentence.rfind(second)]
@@ -49,26 +94,15 @@ class MatchedResult:
                     index = tokens['<obj>'].index(pair[0])
                     tokens['<obj>'][index] = first
 
-                tokens['<act>'] = second
+                act_index = tokens['<act>'].index(pair[1])
+                tokens['<act>'][act_index] = second
+
+        # Verify <sbj> tokens
+        for sbj in tokens['<sbj>']:
+            if not MatchedResult._is_subj(sentence, sbj):
+                tokens = defaultdict(list)
 
         return tokens
-
-    @staticmethod
-    def _get_first_verb_offset(sentence, starting_offset=0):
-        """ Return character offset for the first encountered verb
-        """
-        spacy_nlp = nlp.get_spacy_model()
-        doc = spacy_nlp(sentence)
-        for token in doc:
-            if token.idx < starting_offset:
-                continue
-            # single verb or adverb-verb pair
-            elif token.pos_ == 'VERB' or (
-                    token.tag_ == 'RB' and (token.i + 1 < len(doc) and doc[token.i + 1].pos_ == 'VERB')
-            ):
-                return token.idx
-
-        return -1
 
 
 class FuzzyMatcher:
