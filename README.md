@@ -47,8 +47,20 @@ python setup.py install
 Change to the root directory `Question-Generation/` and follow the instructions at this [link](http://opennmt.net/OpenNMT-py/main.html#installation).
 
 ## Usage
-### Generate Questions
-[To be added]
+### Question Generation
+```
+python script/generate.py [--method METHOD] [--input_path INPUT_PATH] [--output_path OUTPUT_PATH]
+
+arguments:
+  --method METHOD           Question generation method. Available option: [fpm,
+                            symsub, imt, zeroshot, eda]
+                            
+  --input_path INPUT_PATH   Path to input file in plain text, each question is
+                            separated by newline
+                            
+  --output_path OUTPUT_PATH Path to output file in json format, each question maps 
+                            to a list of generated questions
+```
 
 ### Demo Script
 ```
@@ -95,11 +107,14 @@ Generated questions:
 
 ### Training text style transfer model via Iterative Matching and Translation (IMT)
 ```
-python script/imt_train.py config/experiments/sample.yml
+python script/imt_train.py CONFIG
+
+argument:
+  CONFIG path to config file (e.g.: config/experiments/sample.yml)
 ```
 
 #### Configuration file
-This script reads all configuration settings from a single yaml file. To get started, copy the provided `sample.yml` file in `config/experiments/` folder and modify the value of each parameter accordingly. Each parameter (other than the general configurations) is prefixed by the name of pipeline component that consumes it. For example, `bootstrap_corpus-sentence_encoder` indicates parameter `sentence_encoder` is consumed by the `bootstrap_corpus` pipeline.
+This script reads all configuration settings from a single yaml file. To get started, copy the provided `sample.yml` file in `config/experiments/` folder and modify the value of each parameter accordingly. Each parameter (other than the general configurations) is prefixed by the name of pipeline component that utilizes it. For example, `bootstrap_corpus-sentence_encoder` indicates parameter `sentence_encoder` is used by the `bootstrap_corpus` pipeline.
 
 There are in total 6 types of configuration parameter:
 ##### general
