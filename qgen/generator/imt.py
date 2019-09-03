@@ -43,8 +43,8 @@ class IMTGenerator(BaseGenerator):
         print(f"Generating questions via {self.name}...")
         _, translation_result = self.translator.translate(sentences, batch_size=_BATCH_SIZE)
 
-        result = dict()
+        results = dict()
         for i, rewrites in enumerate(translation_result):
-            result[sentences[i]] = rewrites
+            results[sentences[i]] = rewrites
 
-        return result
+        return results

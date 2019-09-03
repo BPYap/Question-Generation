@@ -40,11 +40,11 @@ class ZeroShotGenerator(BaseGenerator):
         responses = self.reformulator.reformulate(questions=sentences,
                                                   inference_mode=reformulator_pb2.ReformulatorRequest.BEAM_SEARCH)
 
-        result = dict()
+        results = dict()
         for i, response in enumerate(responses):
             temp = []
             for j, rewrite in enumerate(response):
                 temp.append(rewrite.reformulation)
-            result[sentences[i]] = temp
+            results[sentences[i]] = temp
 
-        return result
+        return results

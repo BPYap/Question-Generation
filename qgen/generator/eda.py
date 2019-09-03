@@ -229,8 +229,8 @@ class EDAGenerator(BaseGenerator):
 
     def batch_generate(self, sentences):
         print(f"Generating questions via {self.name}...")
-        result = dict()
+        results = dict()
         for sentence in tqdm(sentences):
-            result[sentence] = self.generate(sentence)
+            results[sentence] = self.generate(sentence)
 
-        return result
+        return results
