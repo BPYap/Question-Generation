@@ -1,19 +1,27 @@
 import argparse
 
 from qgen.util.file import read_file, write_file, delete_file, split_file
-from qgen.util.nlp import tokenize
+from qgen.util.nlp import get_spacy_model
 
 
 def main(src_full_path, tgt_full_path, src_train_path, tgt_train_path, src_valid_path, tgt_valid_path, validation_ratio,
          src_test_path, tgt_test_path, test_ratio):
     # 1. Tokenize sentences and write to temp file
-    src_temp_path = "src_temp.txt"
-    src_lines = read_file(src_full_path)
-    write_file([" ".join(tokenize(line)) for line in src_lines], src_temp_path)
+    nlp = get_spacy_model()
+    with nlp.disable_pipes('ner'):
+        src_temp_path = "src_temp.txt"
+        src_lines = read_file(src_full_path)
+        write_file(
+            list(" ".join(tokens) for tokens in [[token.text for token in doc] for doc in nlp.pipe(src_lines)]),
+            src_temp_path
+        )
 
-    tgt_temp_path = "tgt_temp.txt"
-    tgt_lines = read_file(tgt_full_path)
-    write_file([" ".join(tokenize(line)) for line in tgt_lines], tgt_temp_path)
+        tgt_temp_path = "tgt_temp.txt"
+        tgt_lines = read_file(tgt_full_path)
+        write_file(
+            list(" ".join(tokens) for tokens in [[token.text for token in doc] for doc in nlp.pipe(tgt_lines)]),
+            tgt_temp_path
+        )
 
     # 2. Split into train, validation, test files
     src_valid_test_temp_path = "src_valid_test_temp.txt"

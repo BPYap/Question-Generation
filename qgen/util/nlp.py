@@ -114,17 +114,12 @@ def _get_coref_model():
     return _coref_cache
 
 
-def tokenize(sentence):
-    nlp = get_spacy_model()
-
-    return [token.text for token in nlp(sentence)]
-
-
 def get_word_mover_dist(sentence1, sentence2):
     nlp = _get_spacy_wmd_model()
 
     try:
-        return nlp(sentence1).similarity(nlp(sentence2))
+        docs = list(nlp.pipe([sentence1, sentence2]))
+        return docs[0].similarity(docs[1])
     except RuntimeError:
         return float('inf')
 

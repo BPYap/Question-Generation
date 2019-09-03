@@ -17,7 +17,7 @@ def main():
     print("Initializing...")
     fpm = FPMGenerator()
     symsub = SymSubGenerator(USEEncoder(USE_PATH))
-    imt = IMTGenerator(ONMT_PATH, IMT_PATH, n_best=5)
+    imt = None
     zeroshot = ZeroShotGenerator(AQA_PATH, AQA_CONFIG_PATH, AQA_MODEL_PATH)
     eda = EDAGenerator()
 

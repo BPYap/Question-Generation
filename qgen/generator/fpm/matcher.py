@@ -7,6 +7,8 @@ import regex
 from qgen.util import nlp
 from .pattern import TOKENS as SPECIAL_TOKENS
 
+_spacy_docs_cache = dict()
+
 
 class MatchedResult:
     def __init__(self, group_id, pattern, match):
@@ -16,11 +18,19 @@ class MatchedResult:
         self.tokens = self._parse_tokens(match.string, pattern, match)
 
     @staticmethod
+    def _get_spacy_doc(sentence):
+        spacy_nlp = nlp.get_spacy_model()
+        if sentence not in _spacy_docs_cache:
+            with spacy_nlp.disable_pipes('ner'):
+                _spacy_docs_cache[sentence] = spacy_nlp(sentence)
+
+        return _spacy_docs_cache[sentence]
+
+    @staticmethod
     def _get_first_verb_offset(sentence, starting_offset=0):
         """ Return character offset for the first encountered verb
         """
-        spacy_nlp = nlp.get_spacy_model()
-        doc = spacy_nlp(sentence)
+        doc = MatchedResult._get_spacy_doc(sentence)
         for token in doc:
             if token.idx < starting_offset:
                 continue
@@ -39,8 +49,8 @@ class MatchedResult:
         # remove punctuations to make things easier
         sentence = " ".join(nlp.replace_punct(sentence, replace_with=" ", ignore_list="-").strip().split())
         substr = " ".join(nlp.replace_punct(substr, replace_with=" ", ignore_list="-").strip().split())
-        spacy_nlp = nlp.get_spacy_model()
-        doc = spacy_nlp(sentence)
+
+        doc = MatchedResult._get_spacy_doc(sentence)
         temp = []
         sbj_tags = ['nsubj', 'nsubjpass']
         previous_dep = None
@@ -49,8 +59,9 @@ class MatchedResult:
                 return True
             elif chunk.text in nlp.get_ngrams(substr, len(chunk.text.split())):
                 # sometimes the subject might be combination of chunks, so we're keeping this chunk for later
-                # *Note: Consecutive subject chunk is discarded since they are two separate and not related noun chunks.
-                # (i.e. If they belongs to same chunk, they'd be grouped together as a chunk, not as 2 separate chunks)
+                # *Note: Consecutive subject chunk is discarded since they are two separate and not
+                # related noun chunks. (i.e. If they belongs to same chunk, they'd be grouped together as
+                # a chunk, not as 2 separate chunks)
                 if not (previous_dep in sbj_tags and chunk.root.dep_ in sbj_tags):
                     temp.append(chunk.text)
                     previous_dep = chunk.root.dep_
@@ -69,10 +80,7 @@ class MatchedResult:
 
         # resolve <sbj> <act> and <obj> <act>
         if "<sbj> <act>" in pattern or "<obj> <act>" in pattern:
-            sbj_act = list(product(tokens['<sbj>'], tokens['<act>']))
-            obj_act = list(product(tokens['<obj>'], tokens['<act>']))
-            pairs = sbj_act + obj_act
-
+            pairs = list(product(tokens['<sbj>'] if "<sbj> <act>" in pattern else tokens['<obj>'], tokens['<act>']))
             unresolved = []
             for pair in pairs:
                 if " ".join(pair) in sentence:
@@ -84,18 +92,19 @@ class MatchedResult:
                 if verb_offset == -1:
                     tokens = defaultdict(list)
                     break
-                second = sentence[verb_offset:sentence.index(sub_sentence) + len(sub_sentence)]
-                first = sub_sentence[:sub_sentence.rfind(second)]
+
+                second_part = sentence[verb_offset:sentence.index(sub_sentence) + len(sub_sentence)]
+                first_part = sub_sentence[:sub_sentence.rfind(second_part)]
 
                 if pair[0] in tokens['<sbj>']:
                     index = tokens['<sbj>'].index(pair[0])
-                    tokens['<sbj>'][index] = first
+                    tokens['<sbj>'][index] = first_part
                 else:
                     index = tokens['<obj>'].index(pair[0])
-                    tokens['<obj>'][index] = first
+                    tokens['<obj>'][index] = first_part
 
                 act_index = tokens['<act>'].index(pair[1])
-                tokens['<act>'][act_index] = second
+                tokens['<act>'][act_index] = second_part
 
         # Verify <sbj> tokens
         for sbj in tokens['<sbj>']:

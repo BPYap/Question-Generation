@@ -13,8 +13,6 @@ WH = {'who', 'what', 'why', 'where', 'when', 'how'}
 # Coordinating conjunction
 FANBOYS = {'for', 'and', 'nor', 'but', 'or', 'yet', 'so'}
 
-_DEBUG = True
-
 
 class FPMGenerator(BaseGenerator):
     """ Generate questions via fuzzy pattern matching on existing question patterns. """
@@ -90,16 +88,17 @@ class FPMGenerator(BaseGenerator):
                 last_aux_index = -1
                 last_sub_index = -1
                 index = 0
-                for token in spacy_nlp(prev_question):
-                    if token.dep_ == 'aux':
-                        last_aux_index = index
-                    elif token.dep_ in ['nsubj', 'nsubjpass']:
-                        last_sub_index = index
-                    elif token.dep_ == 'ROOT':
-                        break
+                with spacy_nlp.disable_pipes('ner'):
+                    for token in spacy_nlp(prev_question):
+                        if token.dep_ == 'aux':
+                            last_aux_index = index
+                        elif token.dep_ in ['nsubj', 'nsubjpass']:
+                            last_sub_index = index
+                        elif token.dep_ == 'ROOT':
+                            break
 
-                    if token.dep_ not in ['case', 'punct']:
-                        index += 1
+                        if token.dep_ not in ['case', 'punct']:
+                            index += 1
 
                 tokens = prev_question.rstrip(".!?, ").split()
                 sub = " ".join(tokens[last_aux_index + 1:last_sub_index + 1])
@@ -116,19 +115,21 @@ class FPMGenerator(BaseGenerator):
         if not FPMGenerator._has_multiple_question(question):
             return [question]
 
-        doc = spacy_nlp(question)
         result = []
-        for sent in doc.sents:
-            # remove leading coordinating conjunction
-            for cc in FANBOYS:
-                if sent.text.lower().startswith(cc):
-                    result.append(sent.text[len(cc) + 1:])
-                    break
-            else:
-                if len(result) >= 1 and any(sent.text.lower().startswith(pre) for pre in ['if so', 'if not']):
-                    result.append(_resolve_followup_question(result[0], sent.text))
+        with spacy_nlp.disable_pipes('ner'):
+            doc = spacy_nlp(question)
+
+            for sent in doc.sents:
+                # remove leading coordinating conjunction
+                for cc in FANBOYS:
+                    if sent.text.lower().startswith(cc):
+                        result.append(sent.text[len(cc) + 1:])
+                        break
                 else:
-                    result.append(sent.text)
+                    if len(result) >= 1 and any(sent.text.lower().startswith(pre) for pre in ['if so', 'if not']):
+                        result.append(_resolve_followup_question(result[0], sent.text))
+                    else:
+                        result.append(sent.text)
 
         context = ""
         combined_wh = [["{} and {}".format(w1, w2), "{} & {}".format(w1, w2)] for w1 in WH for w2 in WH]
@@ -177,9 +178,6 @@ class FPMGenerator(BaseGenerator):
             if not matched_result:
                 continue
             else:
-                if _DEBUG:
-                    print("Matched pattern:", matched_result.pattern)
-
                 tokens = matched_result.tokens
                 if len(tokens['<st>']) > 1:
                     # concatenate multiple statements into single statement
@@ -219,9 +217,8 @@ class FPMGenerator(BaseGenerator):
         return result
 
     def batch_generate(self, sentences):
-        print(f"Generating questions via {self.name}...")
-        result = dict()
+        results = dict()
         for sentence in tqdm(sentences):
-            result[sentence] = self.generate(sentence)
+            results[sentence] = self.generate(sentence)
 
-        return result
+        return results

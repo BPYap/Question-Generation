@@ -27,7 +27,7 @@ def init():
 
     fpm = FPMGenerator()
     symsub = SymSubGenerator(USEEncoder(USE_PATH))
-    imt = IMTGenerator(ONMT_PATH, IMT_PATH, n_best=5)
+    imt = None
     zeroshot = ZeroShotGenerator(AQA_PATH, AQA_CONFIG_PATH, AQA_MODEL_PATH)
     eda = EDAGenerator()
 
@@ -63,7 +63,7 @@ def main(method, input_path, output_path, batch_size=2500):
         batch = []
         for line in f:
             if len(line.strip()) != 0:
-                batch.append(line)
+                batch.append(line.strip())
                 if len(batch) == batch_size:
                     process_batch(batch)
                     batch = []
@@ -74,7 +74,8 @@ def main(method, input_path, output_path, batch_size=2500):
     with open(output_path, 'w', encoding='utf-8') as f:
         json.dump(results, f)
 
-    print("Done.")
+    num_generated = sum([len(v) for v in results.values()])
+    print(f"Done. Number of questions generated: {num_generated} ({num_generated / len(results) * 100}% increases)")
 
 
 if __name__ == '__main__':

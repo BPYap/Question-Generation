@@ -7,7 +7,7 @@ from nltk.corpus import wordnet as wn
 from tqdm import tqdm
 
 from .base import BaseGenerator
-from ..util.nlp import get_spacy_model, tokenize
+from ..util.nlp import get_spacy_model
 
 
 class SymSubGenerator(BaseGenerator):
@@ -21,9 +21,9 @@ class SymSubGenerator(BaseGenerator):
         """
         super().__init__("Sense-disambiguated Synonym Substitution")
 
+        self.encoder = encoder
         self.discount_factor = discount_factor
         self.threshold = threshold
-        self.encoder = encoder
 
     def _get_best_sense_key(self, sentence, lemma, pos):
         def _compute_weightage(main_synset, related_synset):
@@ -93,23 +93,22 @@ class SymSubGenerator(BaseGenerator):
 
         sense_count = len(results)
         results = [(l.key(), s * ((l.count() + 1) / (lemma_count + sense_count))) for l, s in results]
-        # print(sorted(results, key=lambda r: r[1], reverse=True))
+
         return sorted(results, key=lambda r: r[1], reverse=True)[0][0]
 
-    def _get_synonyms(self, sentence, word):
+    def _get_synonyms(self, spacy_doc, word):
+        sentence = spacy_doc.text
         if not sentence or not word or word.lower() in stopwords.words('english') or len(word.split()) > 1:
             return []
 
-        nlp = get_spacy_model()
-        doc = nlp(sentence)
         # ignore `word` that is a part of noun_chunk
-        for noun_chunk in doc.noun_chunks:
+        for noun_chunk in spacy_doc.noun_chunks:
             tokens = [t.strip(string.punctuation) for t in noun_chunk.text.split()
                       if t.strip(string.punctuation).lower() not in stopwords.words('english')]
             if len(tokens) > 1 and word in tokens:
                 return []
 
-        for token in doc:
+        for token in spacy_doc:
             if token.text == word:
                 key = self._get_best_sense_key(sentence, token.lemma_, token.pos_)
                 if key is None:
@@ -119,31 +118,34 @@ class SymSubGenerator(BaseGenerator):
                             if w.lower() != token.lemma_.lower()]
 
     def generate(self, sentence):
-        tokens = tokenize(sentence)
-        tokens_for_sub = [token for token in tokens if tokens.count(token) == 1]
-        token2synonyms = dict()
-        for token in tokens_for_sub:
-            syms = self._get_synonyms(sentence, token)
-            if syms:
-                token2synonyms[token] = [token] + syms
+        return list(self.batch_generate([sentence], use_tqdm=False).values())[0]
 
-        result = []
-        keys = list(token2synonyms.keys())
-        combinations = product(*token2synonyms.values())
-        for combination in combinations:
-            temp = tokens.copy()
-            for i, sub_token in enumerate(combination):
-                key = keys[i]
-                temp[temp.index(key)] = sub_token
+    def batch_generate(self, sentences, use_tqdm=True):
+        results = dict()
+        nlp = get_spacy_model()
+        with nlp.disable_pipes('ner'):
+            docs = nlp.pipe(sentences)
+            for doc in (tqdm(docs, total=len(sentences)) if use_tqdm else docs):
+                tokens = [token.text for token in doc]
+                tokens_for_sub = [token for token in tokens if tokens.count(token) == 1]
+                token2synonyms = dict()
+                for token in tokens_for_sub:
+                    syms = self._get_synonyms(doc, token)
+                    if syms:
+                        token2synonyms[token] = [token] + syms
 
-            result.append(' '.join(temp))
+                result = []
+                keys = list(token2synonyms.keys())
+                combinations = product(*token2synonyms.values())
+                for combination in combinations:
+                    temp = tokens.copy()
+                    for i, sub_token in enumerate(combination):
+                        key = keys[i]
+                        temp[temp.index(key)] = sub_token
 
-        return result
+                    result.append(' '.join(temp))
 
-    def batch_generate(self, sentences):
-        print(f"Generating questions via {self.name}...")
-        result = dict()
-        for sentence in tqdm(sentences):
-            result[sentence] = self.generate(sentence)
+                sentence = doc.text
+                results[sentence] = result
 
-        return result
+        return results
