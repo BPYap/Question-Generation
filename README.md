@@ -52,14 +52,14 @@ Change to the root directory `Question-Generation/` and follow the instructions 
 python script/generate.py [--method METHOD] [--input_path INPUT_PATH] [--output_path OUTPUT_PATH]
 
 arguments:
-  --method METHOD           Question generation method. Available option: [fpm,
-                            symsub, imt, zeroshot, eda]
+  --method METHOD               Question generation method. Available option: [fpm,
+                                symsub, imt, zeroshot, eda]
                             
-  --input_path INPUT_PATH   Path to input file in plain text, each question is
-                            separated by newline
+  --input_path INPUT_PATH       Path to input file in plain text, each question is
+                                separated by newline
                             
-  --output_path OUTPUT_PATH Path to output file in json format, each question maps 
-                            to a list of generated questions
+  --output_path OUTPUT_PATH     Path to output file in json format, each question maps 
+                                to a list of generated questions
 ```
 
 ### Demo Script
