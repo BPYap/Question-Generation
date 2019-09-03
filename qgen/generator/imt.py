@@ -40,7 +40,6 @@ class IMTGenerator(BaseGenerator):
         return list(self.batch_generate([sentence]).values())[0]
 
     def batch_generate(self, sentences):
-        print(f"Generating questions via {self.name}...")
         _, translation_result = self.translator.translate(sentences, batch_size=_BATCH_SIZE)
 
         results = dict()

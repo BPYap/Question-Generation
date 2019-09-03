@@ -102,7 +102,6 @@ class EDAGenerator(BaseGenerator):
             if len(synonyms) >= 1:
                 synonym = random.choice(list(synonyms))
                 new_words = [synonym if word == random_word else word for word in new_words]
-                # print("replaced", random_word, "with", synonym)
                 num_replaced += 1
             if num_replaced >= n:  # only replace up to n words
                 break
@@ -228,7 +227,6 @@ class EDAGenerator(BaseGenerator):
         return augmented_sentences
 
     def batch_generate(self, sentences):
-        print(f"Generating questions via {self.name}...")
         results = dict()
         for sentence in tqdm(sentences):
             results[sentence] = self.generate(sentence)

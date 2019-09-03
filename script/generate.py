@@ -2,8 +2,6 @@ import argparse
 import json
 import os
 
-from tqdm import tqdm
-
 from qgen.encoder.universal_sentence_encoder import USEEncoder
 from qgen.generator import FPMGenerator, SymSubGenerator, IMTGenerator, ZeroShotGenerator, EDAGenerator
 
@@ -29,12 +27,12 @@ def init():
 
     fpm = FPMGenerator()
     symsub = SymSubGenerator(USEEncoder(USE_PATH))
-    imt = IMTGenerator(ONMT_PATH, IMT_PATH, 5)
+    imt = IMTGenerator(ONMT_PATH, IMT_PATH, n_best=5)
     zeroshot = ZeroShotGenerator(AQA_PATH, AQA_CONFIG_PATH, AQA_MODEL_PATH)
     eda = EDAGenerator()
 
 
-def main(method, input_path, output_path):
+def main(method, input_path, output_path, batch_size=2500):
     if method == 'fpm':
         generator = fpm
     elif method == 'symsub':
@@ -49,20 +47,32 @@ def main(method, input_path, output_path):
         print("Unknown method. Default to fpm generator")
         generator = fpm
 
-    result = dict()
+    print(f"Generating questions via {generator.name}...")
+    results = dict()
+    batch_counter = 0
 
-    line_count = 0
-    with open(input_path, 'r', encoding='utf-8') as f:
-        for _ in f:
-            line_count += 1
+    def process_batch(_batch):
+        if len(_batch) > 0:
+            nonlocal results, batch_counter
+            print(f"Processing batch #{batch_counter}...")
+            results.update(generator.batch_generate(_batch))
+            batch_counter += 1
 
     with open(input_path, 'r', encoding='utf-8') as f:
-        for line in tqdm(f, total=line_count):
-            result[line] = generator.generate(line)
+        batch_counter = 0
+        batch = []
+        for line in f:
+            if len(line.strip()) != 0:
+                batch.append(line)
+                if len(batch) == batch_size:
+                    process_batch(batch)
+                    batch = []
+
+        process_batch(batch)
 
     print(f"Saving result to {output_path}...")
     with open(output_path, 'w', encoding='utf-8') as f:
-        json.dump(result, f)
+        json.dump(results, f)
 
     print("Done.")
 

@@ -35,7 +35,6 @@ class ZeroShotGenerator(BaseGenerator):
         return list(self.batch_generate([sentence]).values())[0]
 
     def batch_generate(self, sentences):
-        print(f"Generating questions via {self.name}...")
         reformulator_pb2 = importlib.import_module('px.proto.reformulator_pb2')
         responses = self.reformulator.reformulate(questions=sentences,
                                                   inference_mode=reformulator_pb2.ReformulatorRequest.BEAM_SEARCH)
