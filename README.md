@@ -62,7 +62,7 @@ arguments:
                               to a list of generated questions
 ```
 
-### Demo Script
+### Interactive Demo
 ```
 python script/generation_demo.py
 ```
@@ -127,8 +127,8 @@ There are in total 6 types of configuration parameter:
  - `similarity_threshold`: Threshold for cosine similarity score when matching source sentence and target sentence. Source-target pair whose cosine similarity score is lower than this threshold value is discarded.
 
 ##### prepare_dataset
- - `validation_ratio`: Ratio of validation set when splitting data set for OpenNMT training.
- - `test_ratio`: Ratio of test set when splitting data set for OpenNMT training.
+ - `validation_ratio`: Ratio to split for validation set.
+ - `test_ratio`: Ratio to split for test set.
  
 ##### preprocess
  - Refer to http://opennmt.net/OpenNMT-py/options/preprocess.html
