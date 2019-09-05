@@ -2,7 +2,7 @@ import string
 
 import en_core_web_md
 import spacy
-import numpy as wmd
+import wmd
 
 _spacy_cache = None
 _spacy_wmd_cache = None
