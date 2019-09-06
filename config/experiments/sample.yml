@@ -58,8 +58,8 @@ train-model_dtype: fp32 # choose between {fp32, fp16}
 train-encoder_type: rnn # choose between {rnn, brnn, mean, transformer, cnn}
 train-decoder_type: rnn # choose between {rnn, transformer, cnn}
 train-layers: -1
-train-enc_layers: 1
-train-dec_layers: 1
+train-enc_layers: 2
+train-dec_layers: 2
 train-rnn_size: -1
 train-enc_rnn_size: 50
 train-dec_rnn_size: 50

@@ -69,5 +69,6 @@ wasabi==0.2.2
 Werkzeug==0.15.4
 wmd==1.3.1
 git+https://github.com/pytorch/text.git@master#wheel=torchtext
+https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-2.0.0/en_core_web_sm-2.0.0.tar.gz
 https://github.com/explosion/spacy-models/releases/download/en_core_web_md-2.0.0/en_core_web_md-2.0.0.tar.gz
 https://github.com/huggingface/neuralcoref-models/releases/download/en_coref_md-3.0.0/en_coref_md-3.0.0.tar.gz

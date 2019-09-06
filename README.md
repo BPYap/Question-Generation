@@ -11,26 +11,18 @@
 ## Installation
 ### Step 1: Clone the repository
 ```
-git clone https://github.com/BPYap/Question-Generation
+git clone --recursive https://github.com/BPYap/Question-Generation
 cd Question-Generation
 ```
-### Step 2 (Optional): Setup virtual environment
-Windows:
-```
-python3 -m virtualenv env
-env\scripts\activate
-```
-Ubuntu:
+### Step 2: Install dependencies
 ```
 python3 -m virtualenv env
 source env/bin/activate
-```
-### Step 3: Install dependencies
-```
+
 pip install -r requirements.txt
 python setup.py install
 ```
-### Step 4: Download pretrained models
+### Step 3: Download pretrained models
 ##### fastText
 1. Download [fastText English vectors](https://fasttext.cc/docs/en/crawl-vectors.html) [[direct link](https://dl.fbaipublicfiles.com/fasttext/vectors-crawl/cc.en.300.bin.gz)]
 2. Decompress and put `cc.en.300.bin` under `model/pretrained/fastText` directory
@@ -43,8 +35,6 @@ python setup.py install
 ##### ActiveQA Question Reformulator (pretrained on UN+Paralex datasets)
 1. Download the pretrained model from this [link](https://storage.googleapis.com/pretrained_models/translate.ckpt-1460356.zip)
 2. Decompress and put `translate.ckpt-1460356.data-00000-of-00001`, `translate.ckpt-1460356.index` and `translate.ckpt-1460356.meta` under `model/pretrained/active-qa/translate.ckpt-1460356` directory
-### Step 5: Download OpenNMT toolkit for PyTorch
-Change to the root directory `Question-Generation/` and follow the instructions at this [link](http://opennmt.net/OpenNMT-py/main.html#installation).
 
 ## Usage
 ### Question Generation
