@@ -113,7 +113,7 @@ train-accum_steps: [0]
 train-valid_steps: 8
 train-valid_batch_size: 2
 train-max_generator_batches: 2
-train-train_steps: 128
+train-train_steps: 1024
 train-single_pass: 'false'
 train-epochs: 0
 train-early_stopping: 0
