@@ -44,12 +44,14 @@ class Corpus:
 
         return annoy_index
 
-    def get_most_similar_sentence(self, sentence, threshold=0):
+    def get_most_similar_sentence(self, sentence, exclude_self=True, threshold=0):
         """ Return the most similar sentence (in terms of cosine similarity) from corpus given an input sentence.
         If threshold is specified, only return the most similar sentence if its cosine similarity score
         exceed the threshold value, otherwise return None
 
         :param sentence: input sentence
+        :param exclude_self: if True, return the second most similar sentence if the most similar sentence is the same
+                             as input sentence
         :param threshold: cosine similarity threshold for the returned sentence
 
         :return: most similar sentence if cosine similarity exceeds threshold value else return None
@@ -58,7 +60,12 @@ class Corpus:
             raise RuntimeError("Annoy index not found!")
 
         vector = self.encoder.get_vector(sentence)
-        most_similar_index, distance = self.annoy_index.get_nns_by_vector(vector, 1, include_distances=True)
-        cosine_similarity_score = 0.5 * (2 - distance[0] ** 2)
+        most_similar_index, distance = self.annoy_index.get_nns_by_vector(vector, 2, include_distances=True)
 
-        return self.target_sentences[most_similar_index[0]] if cosine_similarity_score >= threshold else None
+        most_similar_sentence = self.target_sentences[most_similar_index[0]]
+        cosine_similarity_score = 0.5 * (2 - distance[0] ** 2)
+        if most_similar_sentence == sentence and exclude_self:
+            most_similar_sentence = self.target_sentences[most_similar_index[1]]
+            cosine_similarity_score = 0.5 * (2 - distance[1] ** 2)
+
+        return most_similar_sentence if cosine_similarity_score >= threshold else None
