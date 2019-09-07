@@ -106,7 +106,7 @@ argument:
 #### Configuration file
 This script reads all configuration settings from a single yaml file. To get started, copy the provided `sample.yml` file in `config/experiments/` folder and modify the value of each parameter accordingly. Each parameter (other than the general configurations) is prefixed by the name of pipeline component that utilizes it. For example, `bootstrap_corpus-sentence_encoder` indicates parameter `sentence_encoder` is used by the `bootstrap_corpus` pipeline.
 
-There are in total 6 types of configuration parameter:
+There are in total 6 types of configurable parameter:
 ##### general
  - `src_corpus`: Path to unaligned source corpus.
  - `tgt_corpus`: Path to unaligned target corpus.
