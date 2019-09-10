@@ -32,7 +32,7 @@ class IMTGenerator(BaseGenerator):
 
         onmt_parser = argument_parser()
         opts.translate_opts(onmt_parser)
-        opt = onmt_parser.parse_args([f"--model={model_path}", "--src=''", f"--n_best={n_best}"])
+        opt = onmt_parser.parse_args([f"--model={model_path}", "--src=''", f"--n_best={n_best}", "--replace_unk"])
 
         return build_translator(opt, report_score=False, out_file=codecs.open(os.devnull, "w", "utf-8"))
 
