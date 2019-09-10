@@ -1,1 +1,2 @@
-https://storage.googleapis.com/pretrained_models/translate.ckpt-1460356.zip
+without reinforcement learning: https://storage.googleapis.com/pretrained_models/translate.ckpt-1460356.zip
+with reinforcement learning: https://storage.cloud.google.com/pretrained_models/translate.ckpt-6156696.zip

@@ -8,9 +8,10 @@ from qgen.generator import FPMGenerator, SymSubGenerator, IMTGenerator, ZeroShot
 ROOT_PATH = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
 AQA_PATH = os.path.join(ROOT_PATH, 'active-qa')
-AQA_CONFIG_PATH = os.path.join(ROOT_PATH, 'config/pretrained/aqa.json')
+AQA_CONFIG_PATH = os.path.join(ROOT_PATH, 'config/aqa.json')
 AQA_MODEL_PATH = os.path.join(ROOT_PATH, 'model/pretrained/active-qa/translate.ckpt-1460356')
-IMT_PATH = os.path.join(ROOT_PATH, 'model/yahoo-18-Aug/0-onmt_model_step_5000.pt')
+AQA_RL_MODEL_PATH = os.path.join(ROOT_PATH, 'model/pretrained/active-qa/translate.ckpt-6156696')
+# IMT_PATH = os.path.join(ROOT_PATH, 'model/onmt_model_step_15000.pt')
 ONMT_PATH = os.path.join(ROOT_PATH, 'OpenNMT-py')
 USE_PATH = os.path.join(ROOT_PATH, 'model/pretrained/universal_sentence_encoder')
 
@@ -18,6 +19,7 @@ fpm = None
 symsub = None
 imt = None
 zeroshot = None
+zeroshot_rl = None
 eda = None
 
 
@@ -27,8 +29,9 @@ def init():
 
     fpm = FPMGenerator()
     symsub = SymSubGenerator(USEEncoder(USE_PATH))
-    imt = None
+    # imt = IMTGenerator(ONMT_PATH, IMT_PATH, n_best=5)
     zeroshot = ZeroShotGenerator(AQA_PATH, AQA_CONFIG_PATH, AQA_MODEL_PATH)
+    zeroshot_rl = ZeroShotGenerator(AQA_PATH, AQA_CONFIG_PATH, AQA_RL_MODEL_PATH)
     eda = EDAGenerator()
 
 
@@ -37,10 +40,12 @@ def main(method, input_path, output_path, batch_size=2500):
         generator = fpm
     elif method == 'symsub':
         generator = symsub
-    elif method == 'imt':
-        generator = imt
+    # elif method == 'imt':
+    #     generator = imt
     elif method == 'zeroshot':
         generator = zeroshot
+    elif method == 'zeroshot-rl':
+        generator = zeroshot_rl
     elif method == 'eda':
         generator = eda
     else:
@@ -81,7 +86,9 @@ def main(method, input_path, output_path, batch_size=2500):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--method",
-                        help="Question generation method. Available option: [fpm, symsub, imt, zeroshot, eda]")
+                        help="Question generation method. "
+                             # "Available option: [fpm, symsub, imt, zeroshot, zeroshot-rl, eda]")
+                             "Available option: [fpm, symsub, zeroshot, zeroshot-rl, eda]")
     parser.add_argument("--input_path",
                         help="Path to input file in plain text, each question is separated by newline")
     parser.add_argument("--output_path",

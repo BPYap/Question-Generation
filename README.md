@@ -33,8 +33,13 @@ python setup.py install
 1. Download the [transformer variant of Universal Sentence Encoder](https://tfhub.dev/google/universal-sentence-encoder-large/3) [[direct link](https://tfhub.dev/google/universal-sentence-encoder-large/3?tf-hub-format=compressed)]
 2. Decompress and put `assets`, `variables`, `saved_model.pb` and `tfhub_module.pb` under `model/pretrained/universal_sentence_encoder` directory
 ##### ActiveQA Question Reformulator (pretrained on UN+Paralex datasets)
+Checkpoint without reinforcement learning:
 1. Download the pretrained model from this [link](https://storage.googleapis.com/pretrained_models/translate.ckpt-1460356.zip)
 2. Decompress and put `translate.ckpt-1460356.data-00000-of-00001`, `translate.ckpt-1460356.index` and `translate.ckpt-1460356.meta` under `model/pretrained/active-qa/translate.ckpt-1460356` directory
+
+Checkpoint with reinforcement learning:
+1. Download the pretrained model from this [link](https://storage.cloud.google.com/pretrained_models/translate.ckpt-6156696.zip)
+2. Decompress and put `translate.ckpt-6156696.data-00000-of-00001`, `translate.ckpt-6156696.index` and `translate.ckpt-6156696.meta` under `model/pretrained/active-qa/translate.ckpt-6156696` directory
 
 ## Usage
 ### Question Generation
@@ -42,8 +47,7 @@ python setup.py install
 python script/generate.py [--method METHOD] [--input_path INPUT_PATH] [--output_path OUTPUT_PATH]
 
 arguments:
-  --method       METHOD       Question generation method. Available option: [fpm,
-                              symsub, imt, zeroshot, eda]
+  --method       METHOD       Question generation method. Available option: [fpm, symsub, zeroshot, zeroshot-rl, eda]
                             
   --input_path   INPUT_PATH   Path to input file in plain text, each question is
                               separated by newline
@@ -67,8 +71,8 @@ Enter a sentence/question: menu
 Choose a generation method:
         1. Rule-based Pattern Matching
         2. Sense-disambiguated Synonym Substitution
-        3. IMT Style Transfer Model
-        4. Zero-shot Machine Translation Model
+        3. Zero-shot Machine Translation Model
+        4. Zero-shot Machine Translation Model (with reinforcement learning)
         5. Easy Data Augmentation (EDA)
 > 2
 Enter a sentence/question: Is it compulsory to attend lecture?
@@ -94,40 +98,6 @@ Generated questions:
 18. Is it required to go to talk ?
 ====================================================================================================
 ```
-
-### Training text style transfer model via Iterative Matching and Translation (IMT)
-```
-python script/imt_train.py CONFIG
-
-argument:
-  CONFIG path to config file (e.g.: config/experiments/sample.yml)
-```
-
-#### Configuration file
-This script reads all configuration settings from a single yaml file. To get started, copy the provided `sample.yml` file in `config/experiments/` folder and modify the value of each parameter accordingly. Each parameter (other than the general configurations) is prefixed by the name of pipeline component that utilizes it. For example, `bootstrap_corpus-sentence_encoder` indicates parameter `sentence_encoder` is used by the `bootstrap_corpus` pipeline.
-
-There are in total 6 types of configurable parameter:
-##### general
- - `src_corpus`: Path to unaligned source corpus.
- - `tgt_corpus`: Path to unaligned target corpus.
- - `min_update_rate`: Convergence criteria. The iterative process stops when the overall update rate of the newly generated pseudo-parallel corpus is lower than this value.
- 
-##### bootstrap_corpus
- - `sentence_encoder`: Type of sentence encoder. Choose between "fasttext" (Average fastText embedding), "glove" (Average GloVe embedding) or "use" (Universal Sentence Encoder).
- - `similarity_threshold`: Threshold for cosine similarity score when matching source sentence and target sentence. Source-target pair whose cosine similarity score is lower than this threshold value is discarded.
-
-##### prepare_dataset
- - `validation_ratio`: Ratio to split for validation set.
- - `test_ratio`: Ratio to split for test set.
- 
-##### preprocess
- - Refer to http://opennmt.net/OpenNMT-py/options/preprocess.html
- 
-##### train
- - Refer to http://opennmt.net/OpenNMT-py/options/train.html
- 
-##### translate
- - Refer to http://opennmt.net/OpenNMT-py/options/translate.html
 
 ## References
 - Mikolov, Tomas, et al. "Advances in pre-training distributed word representations." arXiv preprint arXiv:1712.09405 (2017).

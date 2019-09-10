@@ -13,5 +13,10 @@
 2. Decompress and put `assets`, `variables`, `saved_model.pb` and `tfhub_module.pb` under `pretrained/universal_sentence_encoder` directory
 
 ### ActiveQA Question Reformulator (pretrained on UN+Paralex datasets)
+Checkpoint without reinforcement learning:
 1. Download the pretrained model from this [link](https://storage.googleapis.com/pretrained_models/translate.ckpt-1460356.zip)
 2. Decompress and put `translate.ckpt-1460356.data-00000-of-00001`, `translate.ckpt-1460356.index` and `translate.ckpt-1460356.meta` under `pretrained/active-qa/translate.ckpt-1460356` directory
+
+Checkpoint with reinforcement learning:
+1. Download the pretrained model from this [link](https://storage.cloud.google.com/pretrained_models/translate.ckpt-6156696.zip)
+2. Decompress and put `translate.ckpt-6156696.data-00000-of-00001`, `translate.ckpt-6156696.index` and `translate.ckpt-6156696.meta` under `pretrained/active-qa/translate.ckpt-6156696` directory
