@@ -14,7 +14,7 @@ CAT_1 = {
         "{aux} <st>",
     ],
     "substitution_keys": {"aux": ['am', 'is', 'are']},
-    "defaults": [],
+    
     "description": "generic yes/no question"
 }
 
@@ -25,9 +25,10 @@ CAT_2 = {
         "{aux1} there any <obj>",
         "{aux2} there be <obj>",
         "{aux2} there be any <obj>",
+        "Any <obj>"
     ],
     "substitution_keys": {"aux1": ['is', 'are'], "aux2": ['will', 'would']},
-    "defaults": ["Any <obj>"],
+
     "description": "yes/no question (existential)"
 }
 
@@ -57,7 +58,7 @@ CAT_3 = {
         "aux2": ['do', 'does'],
         "aux3": ['must', 'should', 'shall']
     },
-    "defaults": ["Must <obj>", "Should <obj>", "Shall <obj>"],
+
     "description": "yes/no question (obligatory)"
 }
 
@@ -67,7 +68,7 @@ CAT_4 = {
         "{aux} <st> possible {within} <obj>",
     ],
     "substitution_keys": {"aux": ['is', 'are'], "within": ['within', 'inside', 'in']},
-    "defaults": [],
+    
     "description": "yes/no question (location)"
 }
 
@@ -83,7 +84,7 @@ CAT_5 = {
         "aux": ['do', 'does'],
         "true": ["True", "True or False", "Really", "Ya meh", "Is it true", "True or not"]
     },
-    "defaults": [],
+    
     "description": "generic yes/no question (conditional)"
 }
 
@@ -92,7 +93,7 @@ CAT_6 = {
     "patterns": [
 
     ],
-    "defaults": [],
+    
     "description": ""
 }
 
@@ -110,7 +111,7 @@ CAT_7 = {
         "Given <st> got <obj>",
     ],
     "substitution_keys": {"aux1": ['do', 'does'], "aux2": ['is', 'are'], "aux3": ['will', 'would']},
-    "defaults": [],
+    
     "description": "yes/no question (conditional)"
 }
 
@@ -122,7 +123,7 @@ CAT_8 = {
         "{aux1} <sbj> {need} to <act> after <st>",
     ],
     "substitution_keys": {"aux1": ['do', 'does'], "need": ['have', 'still have', 'need', 'still need']},
-    "defaults": [],
+    
     "description": "yes/no question (post-conditional)"
 }
 
@@ -143,7 +144,7 @@ CAT_9 = {
         "aux1": ['can', 'could', 'may'],
         "aux2": ['am', 'is', 'are'],
     },
-    "defaults": [],
+    
     "description": "can/cannot question"
 }
 
@@ -156,7 +157,7 @@ CAT_10 = {
         "aux1": ['can', 'could'],
         "to": ['to be', 'which is to be'],
     },
-    "defaults": [],
+    
     "description": "can/cannot question (two actions)"
 }
 
@@ -168,7 +169,7 @@ CAT_11 = {
         "As <obj> , {aux1} <sbj> <act>",
     ],
     "substitution_keys": {"aux1": ['can', 'could']},
-    "defaults": [],
+    
     "description": "can/cannot question (role play)"
 }
 
@@ -191,7 +192,7 @@ CAT_12 = {
         "aux2": ['am', 'is', 'are'],
         "if": ['if', 'when', 'while'],
     },
-    "defaults": [],
+    
     "description": "can/cannot question (conditional)"
 }
 
@@ -205,7 +206,7 @@ CAT_13 = {
         "aux": ['can', 'could'],
         "after": ['after', 'now that'],
     },
-    "defaults": [],
+    
     "description": "can/cannot question (post-conditional)"
 }
 
@@ -218,7 +219,7 @@ CAT_14 = {
         "{aux} <obj> be <sbj>",
     ],
     "substitution_keys": {"aux": ['can', 'could']},
-    "defaults": [],
+    
     "description": "can it be question"
 }
 
@@ -234,6 +235,7 @@ CAT_15 = {
         "What {aux2} <obj> mean",
         "What <obj> {aux2} <sbj> {need} to <act>",
         "<st> What <obj> {aux2} <sbj> {need} to <act>",
+        "What <obj>"
     ],
     "substitution_keys": {
         "aux1": ['is', 'are'],
@@ -245,7 +247,7 @@ CAT_15 = {
                         "Explain to me"],
         "need": ['need', 'required']
     },
-    "defaults": ["What <obj>"],
+
     "description": "what question"
 }
 
@@ -260,7 +262,7 @@ CAT_16 = {
         "aux1": ['can', 'could', 'should', 'shall', 'do', 'does'],
         "aux2": ['do', 'does'],
     },
-    "defaults": [],
+    
     "description": "what question (capability)"
 }
 
@@ -270,7 +272,7 @@ CAT_17 = {
         "What {aux} <sbj> do at <obj>",
     ],
     "substitution_keys": {"aux": ['can', 'could']},
-    "defaults": [],
+    
     "description": "what question (location)"
 }
 
@@ -284,7 +286,7 @@ CAT_18 = {
                         "Can you give me overview on",
                         "Give some examples of"]
     },
-    "defaults": [],
+    
     "description": "what question (example)"
 }
 
@@ -304,7 +306,7 @@ CAT_19 = {
         "aux2": ['do', 'does'],
         "offer": ["available in", "offered in", "offered by", 'available on']
     },
-    "defaults": [],
+    
     "description": "what question (options)"
 }
 
@@ -330,7 +332,7 @@ CAT_20 = {
                        ],
         "and": ['and', '&', 'vs']
     },
-    "defaults": [],
+    
     "description": "what question (difference)"
 }
 
@@ -346,7 +348,7 @@ CAT_21 = {
         "aux2": ['do', 'does'],
         "and": ['and', '&', 'vs']
     },
-    "defaults": [],
+    
     "description": "comparison (similarity)"
 }
 
@@ -363,7 +365,7 @@ CAT_22 = {
         "aux2": ['do', 'does'],
         "need": ['need', 'have to do']
     },
-    "defaults": [],
+    
     "description": "what question (conditional)"
 }
 
@@ -376,13 +378,14 @@ CAT_23 = {
         "How {aux2} <sbj> <act>",
         "How {aux1} <sbj> <act>",
         "What {aux2} <sbj> {need} to <act>",
+        "How <act>"
     ],
     "substitution_keys": {
         "aux1": ['can', 'could', 'should', 'shall'],
         "aux2": ['do', 'does'],
         "need": ['need', 'have to do']
     },
-    "defaults": ["How <act>"],
+
     "description": "how to question"
 }
 
@@ -396,7 +399,7 @@ CAT_24 = {
         "need": ['need to do', 'have to do'],
         "while": ['while', 'if']
     },
-    "defaults": [],
+    
     "description": "how to question (role play)"
 }
 
@@ -451,7 +454,7 @@ CAT_25 = {
         "advise": ["advise", "guide", "please advise", "please guide"],
         "if": ['if', 'while', 'when']
     },
-    "defaults": [],
+    
     "description": "how to question (conditional)"
 }
 
@@ -462,7 +465,7 @@ CAT_26 = {
         "What {aux} <sbj> {have} to do after <st>",
     ],
     "substitution_keys": {"aux": ['do', 'does'], "have": ['have', 'need']},
-    "defaults": [],
+    
     "description": "how to question (post-conditional)"
 }
 
@@ -475,7 +478,7 @@ CAT_27 = {
         "How {aux1} <obj> <act> for <obj>",
     ],
     "substitution_keys": {"aux1": ['is', 'are'], "aux2": ['do', 'does']},
-    "defaults": [],
+    
     "description": "how stuff works question"
 }
 
@@ -492,7 +495,7 @@ CAT_28 = {
         "aux": ['is', 'are'],
         "good": ['good', 'well recognised', 'internationally recognised']
     },
-    "defaults": [],
+    
     "description": "how positive question"
 }
 
@@ -503,14 +506,15 @@ CAT_29 = {
         "How long {aux2} <obj> <act>",
         "How long {aux3} <obj> <act>",
         "How long {aux1} <obj>",
-        "What is the duration for <obj>"
+        "What is the duration for <obj>",
+        "How long <obj>"
     ],
     "substitution_keys": {
         "aux1": ['is', 'are'],
         "aux2": ['do', 'does'],
         "aux3": ['can', 'should', 'will', 'would'],
     },
-    "defaults": ["How long <obj>"],
+
     "description": "how long question"
 }
 
@@ -526,6 +530,7 @@ CAT_30 = {
         "How {much} <obj> {aux1} there for <st>",
 
         "What is the amount of <obj>",
+        "How {much} <obj>",
     ],
     "substitution_keys": {
         "aux1": ['is', 'are'],
@@ -534,7 +539,7 @@ CAT_30 = {
         "much": ['much', 'many'],
         "has": ['has', 'have'],
     },
-    "defaults": ["How much <obj>", "How many <obj>"],
+
     "description": "how much question"
 }
 
@@ -556,7 +561,7 @@ CAT_31 = {
         "aux": ['am', 'is', 'are', 'do', 'does'],
         "this": ['this', 'that']
     },
-    "defaults": [],
+    
     "description": "why question I"
 }
 
@@ -566,7 +571,7 @@ CAT_32 = {
         "Why {aux} <sbj> <act>",
     ],
     "substitution_keys": {"aux": ['can', 'should', 'will', 'would']},
-    "defaults": [],
+    
     "description": "why question II"
 }
 
@@ -584,7 +589,7 @@ CAT_33 = {
         "aux": ['am', 'is', 'are'],
         "cannot": ['cannot', 'unable to']
     },
-    "defaults": [],
+    
     "description": "why cannot question"
 }
 
@@ -594,12 +599,13 @@ CAT_34 = {
         "Where {aux1} <obj>",
         "Where {aux2} <sbj> find the procedure to <act>",
         "Where to <act>",
+        "Where <obj>"
     ],
     "substitution_keys": {
         "aux1": ['is', 'are'],
         "aux2": ['can', 'could']
     },
-    "defaults": ["Where <obj>"],
+
     "description": "where is question"
 }
 
@@ -615,7 +621,7 @@ CAT_35 = {
         "aux1": ['is', 'are'],
         "aux2": ['can', 'could', 'should', 'shall', 'will', 'would'],
     },
-    "defaults": [],
+    
     "description": "who is question"
 }
 
@@ -627,7 +633,7 @@ CAT_36 = {
     "substitution_keys": {
         "aux": ['do', 'does']
     },
-    "defaults": [],
+    
     "description": "who does question"
 }
 
@@ -650,7 +656,7 @@ CAT_37 = {
         "aux1": ['do', 'does'],
         "aux2": ['can', 'could', 'should', 'shall']
     },
-    "defaults": [],
+    
     "description": "who can I contact question"
 }
 
@@ -659,9 +665,10 @@ CAT_38 = {
     "patterns": [
         "Which <obj> {aux} <act>",
         "Which <obj> <act>",
+        "Which <obj>"
     ],
     "substitution_keys": {"aux": ['will', 'would', 'can', 'could']},
-    "defaults": ["Which <obj>"],
+
     "description": "which question"
 }
 
@@ -677,7 +684,7 @@ CAT_39 = {
         "aux2": ['is', 'are'],
         "which": ['which', 'what']
     },
-    "defaults": [],
+    
     "description": "which to use question"
 }
 
@@ -689,13 +696,14 @@ CAT_40 = {
         "When {aux2} <sbj> <act>",
         "<st> When {aux2} <sbj> <act>",
         "When {aux3} be <obj>",
+        "When <obj>"
     ],
     "substitution_keys": {
         "aux1": ['is', 'are'],
         "aux2": ['do', 'does', 'can', 'could', 'should', 'shall'],
         "aux3": ['will', 'would']
     },
-    "defaults": ["When <obj>"],
+
     "description": "when question"
 }
 
@@ -709,7 +717,7 @@ CAT_41 = {
         "aux": ['do', 'does', 'will', 'would'],
         "start": ['start', 'open'],
     },
-    "defaults": [],
+    
     "description": "when question (begin)"
 }
 
@@ -723,7 +731,7 @@ CAT_42 = {
         "aux": ['do', 'does', 'will', 'would'],
         "deadline": ['deadline', 'a deadline', 'closing date', 'a closing date'],
     },
-    "defaults": [],
+    
     "description": "when question (end)"
 }
 
@@ -733,7 +741,7 @@ CAT_43 = {
         "When {aux} <sbj> <act>",
     ],
     "substitution_keys": {"aux": ['must', 'should', 'do', 'does']},
-    "defaults": [],
+    
     "description": "when question (obligatory)"
 }
 
@@ -746,7 +754,7 @@ CAT_44 = {
     "substitution_keys": {
         "aux": ['can', 'could', 'will', 'would'],
     },
-    "defaults": [],
+    
     "description": "request question"
 }
 
@@ -760,7 +768,7 @@ CAT_45 = {
         "If <sbj> <act> then how",
     ],
     "substitution_keys": {},
-    "defaults": [],
+    
     "description": "hypothetical question"
 }
 
@@ -772,7 +780,7 @@ CAT_46 = {
         "<st> {aux} <sbj> <act>",
     ],
     "substitution_keys": {"aux": ['will', 'would']},
-    "defaults": [],
+    
     "description": "yes/no question (future tense)"
 }
 
@@ -782,7 +790,7 @@ CAT_47 = {
         "If <st> {aux} <sbj> <act>",
     ],
     "substitution_keys": {"aux": ['will', 'would']},
-    "defaults": [],
+    
     "description": "can/cannot question (future tense)"
 }
 
@@ -793,7 +801,7 @@ CAT_48 = {
         "I wish to know what <obj> {aux} be equivalent to <obj>",
     ],
     "substitution_keys": {"aux": ['will', 'would']},
-    "defaults": [],
+    
     "description": "what question (future tense)"
 }
 
@@ -807,7 +815,7 @@ CAT_49 = {
         "<st> How {aux} <sbj> <act>",
     ],
     "substitution_keys": {"aux": ['will', 'would']},
-    "defaults": [],
+    
     "description": "how question (future tense)"
 }
 
@@ -817,7 +825,7 @@ CAT_50 = {
         "How {much} <obj> {aux} <sbj> <act>",
     ],
     "substitution_keys": {"aux": ['will', 'would'], "much": ['much', 'many']},
-    "defaults": [],
+    
     "description": "how many question (future tense)"
 }
 
@@ -827,7 +835,7 @@ CAT_51 = {
         "Where {aux} <obj> <act>",
     ],
     "substitution_keys": {"aux": ['will', 'would']},
-    "defaults": [],
+    
     "description": "where question (future tense)"
 }
 
@@ -839,7 +847,7 @@ CAT_52 = {
         "When {aux} <sbj> <act>",
     ],
     "substitution_keys": {"aux": ['will', 'would']},
-    "defaults": [],
+    
     "description": "when question (future tense)"
 }
 
@@ -850,7 +858,7 @@ CAT_53 = {
         "What {aux} happen to <obj> when <st>",
     ],
     "substitution_keys": {"aux": ['will', 'would']},
-    "defaults": [],
+    
     "description": "prediction question (future tense)"
 }
 
@@ -859,7 +867,7 @@ CAT_54 = {
     "patterns": [
 
     ],
-    "defaults": [],
+    
     "description": ""
 }
 
@@ -871,7 +879,7 @@ CAT_55 = {
         "Since when {aux} <obj> <act>",
     ],
     "substitution_keys": {"aux": ['was', 'were']},
-    "defaults": [],
+    
     "description": "when question (past tense)"
 }
 

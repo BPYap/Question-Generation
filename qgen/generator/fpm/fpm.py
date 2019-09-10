@@ -41,7 +41,7 @@ class FPMGenerator(BaseGenerator):
                             temp.append(curr_pattern.replace('{' + token + '}', substitute))
                 group['patterns'].extend(temp)
 
-            patterns.append(group['patterns'] + group['defaults'])
+            patterns.append(group['patterns'])
 
         return patterns
 
