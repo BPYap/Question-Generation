@@ -212,7 +212,7 @@ class FPMGenerator(BaseGenerator):
                         else:
                             result.append(self._format_output(permuted))
 
-                result = list(set(result))
+                result = list(set(result).difference({sentence}))
 
         return result
 
