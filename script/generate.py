@@ -17,6 +17,7 @@ USE_PATH = os.path.join(ROOT_PATH, 'model/pretrained/universal_sentence_encoder'
 
 fpm = None
 symsub = None
+hybrid = None
 imt = None
 zeroshot = None
 zeroshot_rl = None
@@ -24,11 +25,26 @@ eda = None
 
 
 def init():
+    class FPMSymSub:
+        def __init__(self, fpm_generator, symsub_generator):
+            self.fpm = fpm_generator
+            self.symsub = symsub_generator
+            self.name = "Hybrid mode (FPM + SymSub)"
+
+        def batch_generate(self, sentences):
+            results = self.fpm.batch_generate(sentences)
+            for key, value in results.items():
+                sentences = [key] + value
+                results[key].extend([v for s in self.symsub.batch_generate(sentences).values() for v in s])
+
+            return results
+
     print("Initializing...")
-    global fpm, symsub, imt, zeroshot, eda
+    global fpm, symsub, hybrid, imt, zeroshot, zeroshot_rl, eda
 
     fpm = FPMGenerator()
     symsub = SymSubGenerator(USEEncoder(USE_PATH))
+    hybrid = FPMSymSub(fpm, symsub)
     # imt = IMTGenerator(ONMT_PATH, IMT_PATH, n_best=5)
     zeroshot = ZeroShotGenerator(AQA_PATH, AQA_CONFIG_PATH, AQA_MODEL_PATH)
     zeroshot_rl = ZeroShotGenerator(AQA_PATH, AQA_CONFIG_PATH, AQA_RL_MODEL_PATH)
@@ -40,6 +56,8 @@ def main(method, input_path, output_path, batch_size=2500):
         generator = fpm
     elif method == 'symsub':
         generator = symsub
+    elif method == 'hybrid':
+        generator = hybrid
     # elif method == 'imt':
     #     generator = imt
     elif method == 'zeroshot':
@@ -86,9 +104,9 @@ def main(method, input_path, output_path, batch_size=2500):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--method",
-                        help="Question generation method. "
-                             # "Available option: [fpm, symsub, imt, zeroshot, zeroshot-rl, eda]")
-                             "Available option: [fpm, symsub, zeroshot, zeroshot-rl, eda]")
+                        help="Question generation method."
+                        # "Available option: [fpm, symsub, hybrid, imt, zeroshot, zeroshot-rl, eda]")
+                             "Available option: [fpm, symsub, hybrid, zeroshot, zeroshot-rl, eda]")
     parser.add_argument("--input_path",
                         help="Path to input file in plain text, each question is separated by newline")
     parser.add_argument("--output_path",
