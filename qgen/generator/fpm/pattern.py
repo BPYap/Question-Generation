@@ -11,11 +11,10 @@ TOKENS = ['<sbj>', '<obj>', '<act>', '<st>']
 # generic yes/no question
 CAT_1 = {
     "patterns": [
-        "{aux} <st>",
+
     ],
-    "substitution_keys": {"aux": ['am', 'is', 'are']},
-    
-    "description": "generic yes/no question"
+
+    "description": ""
 }
 
 # yes/no question (existential)
@@ -556,6 +555,7 @@ CAT_31 = {
         "Why <sbj> <act>",
 
         "<st> may I know why",
+        "<st> what should I do"
     ],
     "substitution_keys": {
         "aux": ['am', 'is', 'are', 'do', 'does'],

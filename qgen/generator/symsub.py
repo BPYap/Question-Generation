@@ -115,7 +115,7 @@ class SymSubGenerator(BaseGenerator):
                     return []
                 else:
                     return [w.replace("_", " ") for w in wn.lemma_from_key(key).synset().lemma_names()
-                            if w.lower() != token.lemma_.lower()]
+                            if w.lower() != word.lower()]
 
     def generate(self, sentence):
         return list(self.batch_generate([sentence], use_tqdm=False).values())[0]
@@ -126,6 +126,7 @@ class SymSubGenerator(BaseGenerator):
         with nlp.disable_pipes('ner'):
             docs = nlp.pipe(sentences)
             for doc in (tqdm(docs, total=len(sentences)) if use_tqdm else docs):
+                sentence = doc.text
                 tokens = [token.text for token in doc]
                 tokens_for_sub = [token for token in tokens if tokens.count(token) == 1]
                 token2synonyms = dict()
@@ -137,15 +138,17 @@ class SymSubGenerator(BaseGenerator):
                 result = []
                 keys = list(token2synonyms.keys())
                 combinations = product(*token2synonyms.values())
+                next(combinations)  # skip the first combination as it contains all original tokens
                 for combination in combinations:
                     temp = tokens.copy()
                     for i, sub_token in enumerate(combination):
                         key = keys[i]
                         temp[temp.index(key)] = sub_token
 
-                    result.append(' '.join(temp))
+                    sent = ' '.join(temp).strip('?').strip() + "?"
+                    if sent != sentence:
+                        result.append(sent)
 
-                sentence = doc.text
                 results[sentence] = result
 
         return results

@@ -148,14 +148,23 @@ class FuzzyMatcher:
         return fuzzy_regex
 
     def match(self, sentence):
+        def get_effective_length(_pattern):
+            # get pattern length without counting special tokens
+            _pattern = _pattern.replace("<sbj>", "")
+            _pattern = _pattern.replace("<obj>", "")
+            _pattern = _pattern.replace("<act>", "")
+            _pattern = _pattern.replace("<st>", "")
+
+            return len(_pattern)
+
         candidates = []
         for group_id, group in enumerate(self.patterns):
             for pattern, fuzzy_regex in group:
-                match = regex.fullmatch(fuzzy_regex, sentence)
+                match = regex.fullmatch(fuzzy_regex, sentence.strip("?"))
                 if match is not None:
                     candidates.append(MatchedResult(group_id, pattern, match))
 
         # sort by least fuzzy count, then by most pattern length
-        candidates.sort(key=lambda x: (x.fuzzy_counts, -len(x.pattern)))
+        candidates.sort(key=lambda x: (x.fuzzy_counts, -get_effective_length(x.pattern)))
 
         return candidates[0] if len(candidates) > 0 else None
