@@ -16,7 +16,7 @@ cd Question-Generation
 ```
 ### Step 2: Install dependencies
 ```
-python3 -m virtualenv env
+python -m virtualenv env
 source env/bin/activate
 
 pip install -r requirements.txt
