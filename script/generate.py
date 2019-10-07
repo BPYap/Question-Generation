@@ -1,6 +1,7 @@
 import argparse
 import json
 import os
+from collections import defaultdict
 
 from qgen.encoder.universal_sentence_encoder import USEEncoder
 from qgen.generator import FPMGenerator, SymSubGenerator, IMTGenerator, ZeroShotGenerator, EDAGenerator
@@ -24,48 +25,42 @@ zeroshot_rl = None
 eda = None
 
 
-def init():
-    class FPMSymSub:
-        def __init__(self, fpm_generator, symsub_generator):
-            self.fpm = fpm_generator
-            self.symsub = symsub_generator
-            self.name = "Hybrid mode (FPM + SymSub)"
+class FPMSymSub:
+    def __init__(self, fpm_generator, symsub_generator):
+        self.fpm = fpm_generator
+        self.symsub = symsub_generator
+        self.name = "Hybrid mode (FPM + SymSub)"
 
-        def batch_generate(self, sentences):
-            results = self.fpm.batch_generate(sentences)
-            for key, value in results.items():
-                sentences = [key] + value
-                results[key].extend([v for s in self.symsub.batch_generate(sentences).values() for v in s])
+    def batch_generate(self, sentences):
+        print("Generating with FPM...")
+        temp1 = self.symsub.batch_generate(sentences)
+        print("Generating with SymSub...")
+        temp2 = self.fpm.batch_generate([s for k, v in temp1.items() for s in [k] + v])
 
-            return results
+        results = defaultdict(list)
+        for key, values in temp1.items():
+            results[key].extend(temp2[key])
+            for value in values:
+                results[key].extend(temp2[value])
 
-    print("Initializing...")
-    global fpm, symsub, hybrid, imt, zeroshot, zeroshot_rl, eda
-
-    fpm = FPMGenerator()
-    symsub = SymSubGenerator(USEEncoder(USE_PATH))
-    hybrid = FPMSymSub(fpm, symsub)
-    # imt = IMTGenerator(ONMT_PATH, IMT_PATH, n_best=5)
-    zeroshot = ZeroShotGenerator(AQA_PATH, AQA_CONFIG_PATH, AQA_MODEL_PATH)
-    zeroshot_rl = ZeroShotGenerator(AQA_PATH, AQA_CONFIG_PATH, AQA_RL_MODEL_PATH)
-    eda = EDAGenerator()
+        return results
 
 
 def main(method, input_path, output_path, batch_size=2500):
     if method == 'fpm':
-        generator = fpm
+        generator = FPMGenerator()
     elif method == 'symsub':
-        generator = symsub
+        generator = SymSubGenerator(USEEncoder(USE_PATH))
     elif method == 'hybrid':
-        generator = hybrid
+        generator = FPMSymSub(FPMGenerator(), SymSubGenerator(USEEncoder(USE_PATH)))
     # elif method == 'imt':
-    #     generator = imt
+    #     generator = IMTGenerator(ONMT_PATH, IMT_PATH, n_best=5)
     elif method == 'zeroshot':
-        generator = zeroshot
+        generator = ZeroShotGenerator(AQA_PATH, AQA_CONFIG_PATH, AQA_MODEL_PATH)
     elif method == 'zeroshot-rl':
-        generator = zeroshot_rl
+        generator = ZeroShotGenerator(AQA_PATH, AQA_CONFIG_PATH, AQA_RL_MODEL_PATH)
     elif method == 'eda':
-        generator = eda
+        generator = EDAGenerator()
     else:
         print("Unknown method. Default to fpm generator")
         generator = fpm
@@ -114,5 +109,4 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    init()
     main(args.method, args.input_path, args.output_path)
