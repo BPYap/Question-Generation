@@ -157,8 +157,8 @@ class FPMGenerator(BaseGenerator):
 
     @staticmethod
     def _preprocess(question):
-        # 1. Convert contradiction to regular form (e.g. "What's" to "What is")
-        question = nlp.convert_contradiction(FPMGenerator._format_input(question).strip())
+        # 1. Convert contraction to regular form (e.g. "What's" to "What is")
+        question = nlp.convert_contraction(FPMGenerator._format_input(question).strip())
 
         # 2. Separate multiple questions from sentence
         sentences = [question]

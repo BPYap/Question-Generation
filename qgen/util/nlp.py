@@ -13,7 +13,7 @@ AUXILIARIES = ['am', 'is', 'are', 'was', 'were', 'be', 'could', 'can', 'should',
                'might', 'may', 'must', 'ought', 'does', 'did', 'do', 'been']
 SUBJECTS = ['i', 'me', 'my', 'he', 'him', 'his', 'she', 'her', 'we', 'our', 'us', 'they', 'them', 'their',
             'you', 'your', 'it', 'its']
-CONTRADICTION = {
+CONTRACTION = {
     "'tis": "this is",
     "'twas": "this was",
     "ain't": "are not",
@@ -119,14 +119,14 @@ def replace_punct(sentence, replace_with="", ignore_list=""):
         return sentence.translate(str.maketrans('', '', punct))
 
 
-def convert_contradiction(sentence):
+def convert_contraction(sentence):
     """ Returns converted `sentence` with contradictions replaced. (e.g. "What's" is replaced with "What is")
     """
     tokens = sentence.split()
     for i, t in enumerate(tokens):
-        for c in CONTRADICTION:
+        for c in CONTRACTION:
             if t.lower().rstrip(string.punctuation) == c.lower():
-                tokens[i] = CONTRADICTION[c]
+                tokens[i] = CONTRACTION[c]
                 if t[0].isupper():
                     tokens[i] = tokens[i].capitalize()
 
