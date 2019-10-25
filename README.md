@@ -1,4 +1,4 @@
-# Question_Generation
+# Question Generation for Text Augmentation
 
 ##### Table of Contents  
 [Introduction](#introduction)  
@@ -8,7 +8,7 @@
 ## Introduction
 This repository provides a command line script written in Python for generating multiple variations of questions (both syntactically or/and lexically) from an input question automatically. The generated questions can be used in training of automated question answering system as augmentation for training datasets. This augmentation technique is especially useful when training datasets are small and limited.
 
-The generation script includes 5 different question generation methods, 3 of which are proposed by us and the other 2 are adopted from other researches. 
+The generation script includes 5 different question generation methods, 3 of which were proposed by us and the other 2 were adopted from other researches. 
 
 The descriptions of each question generation method are given below:
 - **Rule-based Pattern Matching**. Generate questions with different syntactic structures using hand-crafted question templates.
