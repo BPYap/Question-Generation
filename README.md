@@ -6,7 +6,16 @@
 [Usage](#usage) 
 
 ## Introduction
-[To be added]
+This repository provides a command line script written in Python for generating multiple variations of questions (both syntactically or/and lexically) from an input question automatically. The generated questions can be used in training of automated question answering system as augmentation for training datasets. This augmentation technique is especially useful when training datasets are small and limited.
+
+The generation script includes 5 different question generation methods, 3 of which are proposed by us and the other 2 are adopted from other researches. 
+
+The descriptions of each question generation method are given below:
+- **Rule-based Pattern Matching**. Generate questions with different syntactic structures using hand-crafted question templates.
+- **Sense-disambiguated synonyms substitution**. Generates questions with different lexical structures using sense-disambiguated synonoyms.
+- **Hybrid Mode**. Combination of the previous 2 methods for generating questions with different syntactic and lexical structures.
+- **Zero-shot Neural Machine Translation**. Questions reformulator based on zero-shot neural machine translation proposed by [Buck et al. (2017)](https://arxiv.org/abs/1705.07830).
+- **Easy Data Augmentation (EDA)**. Text augmentation technique introduced by [Wei et al. (2019)](https://arxiv.org/abs/1901.11196) which permutes texts using 4 simple but powerful operations: synonym replacement, random insertion, random swap, and random deletion.
 
 ## Installation
 ### Step 1: Clone the repository
@@ -104,7 +113,6 @@ Generated questions:
 - Pennington, Jeffrey, Richard Socher, and Christopher Manning. "Glove: Global vectors for word representation." Proceedings of the 2014 conference on empirical methods in natural language processing (EMNLP). 2014.
 - Cer, Daniel, et al. "Universal sentence encoder." arXiv preprint arXiv:1803.11175 (2018).
 - Buck, Christian, et al. "Ask the right questions: Active question reformulation with reinforcement learning." arXiv preprint arXiv:1705.07830 (2017).
-- Jin, Zhijing, et al. "Unsupervised Text Style Transfer via Iterative Matching and Translation." arXiv preprint arXiv:1901.11333 (2019).
 - Wei, Jason W., and Kai Zou. "Eda: Easy data augmentation techniques for boosting performance on text classification tasks." arXiv preprint arXiv:1901.11196 (2019).
 - Klein, Guillaume, et al. "OpenNMT: Neural Machine Translation Toolkit." arXiv preprint arXiv:1805.11462 (2018).
 - Miller, George A. WordNet: An electronic lexical database. MIT press, 1998.
