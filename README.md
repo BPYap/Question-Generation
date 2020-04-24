@@ -15,7 +15,7 @@ The question generation engine includes 3 question generation modes:
 
 For comparison sake, we also implement an interface to the following text generation methods from other researches:
 - **Zero-shot Neural Machine Translation** ([Buck et al., 2017](https://arxiv.org/abs/1705.07830)). Questions reformulator based on zero-shot neural machine translation. (GitHub link: https://github.com/google/active-qa)
-- **Easy Data Augmentation (EDA)** ([Wei et al., 2019](https://arxiv.org/abs/1901.11196)). Text augmentation technique based on 4 text manipulation operations: synonym replacement, random insertion, random swap, and random deletion. (GitHub link: https://github.com/jasonwei20/eda_nlp) 
+- **Easy Data Augmentation (EDA)** ([Wei et al., 2019](https://arxiv.org/abs/1901.11196)). Text augmentation technique based on several text manipulation operations. (GitHub link: https://github.com/jasonwei20/eda_nlp) 
 
 ## Installation
 ### Step 1: Clone the repository
