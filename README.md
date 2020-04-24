@@ -1,21 +1,21 @@
 # Question Generation for Text Augmentation
 
-##### Table of Contents  
-[Introduction](#introduction)  
-[Installation](#installation)  
-[Usage](#usage) 
+## Table of Contents  
+- [Introduction](#introduction)  
+- [Installation](#installation)  
+- [Usage](#usage) 
 
 ## Introduction
-This repository provides a command line script written in Python for generating multiple variations of questions (both syntactically or/and lexically) from an input question automatically. The generated questions can be used in training of automated question answering system as augmentation for training datasets. This augmentation technique is especially useful when training datasets are small and limited.
+This repository provides a command-line application written in Python for generating multiple variations of questions (both syntactically or/and lexically) from an input question using a combination of rule-based and statistical methods. The generated questions can then be used as additional training data for training question answering models, which can be very useful when training data is small and limited.
 
-The generation script includes 5 different question generation methods, 3 of which were proposed by us and the other 2 were adopted from other researches. 
-
-The descriptions of each question generation method are given below:
+The question generation engine includes 3 question generation modes:
 - **Rule-based Pattern Matching**. Generate questions with different syntactic structures using hand-crafted question templates.
 - **Sense-disambiguated synonyms substitution**. Generates questions with different lexical structures using sense-disambiguated synonoyms.
-- **Hybrid Mode**. Combination of the previous 2 methods for generating questions with different syntactic and lexical structures.
-- **Zero-shot Neural Machine Translation**. Questions reformulator based on zero-shot neural machine translation proposed by [Buck et al. (2017)](https://arxiv.org/abs/1705.07830).
-- **Easy Data Augmentation (EDA)**. Text augmentation technique introduced by [Wei et al. (2019)](https://arxiv.org/abs/1901.11196) which permutes texts using 4 simple but powerful operations: synonym replacement, random insertion, random swap, and random deletion.
+- **Hybrid Mode**. Combination of the previous 2 methods to generate questions with different syntactic and lexical structures.
+
+For comparison sake, we also implement an interface to the following text generation methods from other researches:
+- **Zero-shot Neural Machine Translation** ([Buck et al., 2017](https://arxiv.org/abs/1705.07830)). Questions reformulator based on zero-shot neural machine translation. (GitHub link: https://github.com/google/active-qa)
+- **Easy Data Augmentation (EDA)** ([Wei et al., 2019](https://arxiv.org/abs/1901.11196)). Text augmentation technique based on 4 text manipulation operations: synonym replacement, random insertion, random swap, and random deletion. (GitHub link: https://github.com/jasonwei20/eda_nlp) 
 
 ## Installation
 ### Step 1: Clone the repository
@@ -32,22 +32,16 @@ pip install -r requirements.txt
 python setup.py install
 ```
 ### Step 3: Download pretrained models
-##### fastText
-1. Download [fastText English vectors](https://fasttext.cc/docs/en/crawl-vectors.html) [[direct link](https://dl.fbaipublicfiles.com/fasttext/vectors-crawl/cc.en.300.bin.gz)]
-2. Decompress and put `cc.en.300.bin` under `model/pretrained/fastText` directory
-##### GloVe
-1. Download [spaCy pretrained GloVe model](https://spacy.io/models/en#en_vectors_web_lg) [[direct link](https://github.com/explosion/spacy-models/releases/download/en_vectors_web_lg-2.1.0/en_vectors_web_lg-2.1.0.tar.gz)]
-2. Decompress and put `en_vectors_web_lg-2.1.0` (the most nested folder) under `model/pretrained/spacy_glove` directory
 ##### Universal Sentence Encoder
-1. Download the [transformer variant of Universal Sentence Encoder](https://tfhub.dev/google/universal-sentence-encoder-large/3) [[direct link](https://tfhub.dev/google/universal-sentence-encoder-large/3?tf-hub-format=compressed)]
+1. Download [the transformer variant of Universal Sentence Encoder](https://tfhub.dev/google/universal-sentence-encoder-large/3) ([direct link](https://tfhub.dev/google/universal-sentence-encoder-large/3?tf-hub-format=compressed))
 2. Decompress and put `assets`, `variables`, `saved_model.pb` and `tfhub_module.pb` under `model/pretrained/universal_sentence_encoder` directory
 ##### ActiveQA Question Reformulator (pretrained on UN+Paralex datasets)
 Checkpoint without reinforcement learning:
-1. Download the pretrained model from this [link](https://storage.googleapis.com/pretrained_models/translate.ckpt-1460356.zip)
+1. Download the pretrained model from this [direct link](https://storage.googleapis.com/pretrained_models/translate.ckpt-1460356.zip)
 2. Decompress and put `translate.ckpt-1460356.data-00000-of-00001`, `translate.ckpt-1460356.index` and `translate.ckpt-1460356.meta` under `model/pretrained/active-qa/translate.ckpt-1460356` directory
 
 Checkpoint with reinforcement learning:
-1. Download the pretrained model from this [link](https://storage.cloud.google.com/pretrained_models/translate.ckpt-6156696.zip)
+1. Download the pretrained model from this [direct link](https://storage.cloud.google.com/pretrained_models/translate.ckpt-6156696.zip)
 2. Decompress and put `translate.ckpt-6156696.data-00000-of-00001`, `translate.ckpt-6156696.index` and `translate.ckpt-6156696.meta` under `model/pretrained/active-qa/translate.ckpt-6156696` directory
 
 ## Usage
@@ -56,7 +50,7 @@ Checkpoint with reinforcement learning:
 python script/generate.py [--method METHOD] [--input_path INPUT_PATH] [--output_path OUTPUT_PATH]
 
 arguments:
-  --method       METHOD       Question generation method. Available option: [fpm, symsub, zeroshot, zeroshot-rl, eda]
+  --method       METHOD       Question generation method. Available option: [fpm, symsub, hybrid, zeroshot, zeroshot-rl, eda]
                             
   --input_path   INPUT_PATH   Path to input file in plain text, each question is
                               separated by newline
@@ -109,10 +103,8 @@ Generated questions:
 ```
 
 ## References
-- Mikolov, Tomas, et al. "Advances in pre-training distributed word representations." arXiv preprint arXiv:1712.09405 (2017).
-- Pennington, Jeffrey, Richard Socher, and Christopher Manning. "Glove: Global vectors for word representation." Proceedings of the 2014 conference on empirical methods in natural language processing (EMNLP). 2014.
-- Cer, Daniel, et al. "Universal sentence encoder." arXiv preprint arXiv:1803.11175 (2018).
 - Buck, Christian, et al. "Ask the right questions: Active question reformulation with reinforcement learning." arXiv preprint arXiv:1705.07830 (2017).
-- Wei, Jason W., and Kai Zou. "Eda: Easy data augmentation techniques for boosting performance on text classification tasks." arXiv preprint arXiv:1901.11196 (2019).
-- Klein, Guillaume, et al. "OpenNMT: Neural Machine Translation Toolkit." arXiv preprint arXiv:1805.11462 (2018).
+- Wei, Jason, and Kai Zou. "EDA: Easy Data Augmentation Techniques for Boosting Performance on Text Classification Tasks." Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint Conference on Natural Language Processing (EMNLP-IJCNLP). 2019.
+- Cer, Daniel, et al. "Universal sentence encoder." arXiv preprint arXiv:1803.11175 (2018).
 - Miller, George A. WordNet: An electronic lexical database. MIT press, 1998.
+- Basile, Pierpaolo, Annalina Caputo, and Giovanni Semeraro. "An enhanced lesk word sense disambiguation algorithm through a distributional semantic model." Proceedings of COLING 2014, the 25th International Conference on Computational Linguistics: Technical Papers. 2014.

@@ -49,7 +49,7 @@ def main():
             else:
                 print("Unknown option. Please try again.")
         else:
-            input_sentence = input("Enter a sentence/question: ")
+            input_sentence = input("Enter a sentence/question (enter 'menu' to select other method): ")
 
             if input_sentence == "menu":
                 generator = None
