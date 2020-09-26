@@ -8,7 +8,7 @@ PyYAML==5.1.1
 regex==2018.1.10
 sentencepiece==0.1.82
 spacy==2.0.13
-tensorflow==1.15.2
+tensorflow==1.15.4
 tensorflow-hub==0.4.0
 #torch==1.1.0
 #torchvision==0.3.0
