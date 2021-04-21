@@ -37,11 +37,11 @@ python setup.py install
 2. Decompress and put `assets`, `variables`, `saved_model.pb` and `tfhub_module.pb` under `model/pretrained/universal_sentence_encoder` directory
 ##### ActiveQA Question Reformulator (pretrained on UN+Paralex datasets)
 Checkpoint without reinforcement learning:
-1. Download the pretrained model from this [direct link](https://storage.googleapis.com/pretrained_models/translate.ckpt-1460356.zip)
+1. Download the pretrained model from this [link](https://entuedu-my.sharepoint.com/:f:/g/personal/boonpeng001_e_ntu_edu_sg/EsdUVUQHqNRCvkE4b2en5a8BsHmKu4tod8FQKsl61AFs0g?e=ERdYah)
 2. Decompress and put `translate.ckpt-1460356.data-00000-of-00001`, `translate.ckpt-1460356.index` and `translate.ckpt-1460356.meta` under `model/pretrained/active-qa/translate.ckpt-1460356` directory
 
 Checkpoint with reinforcement learning:
-1. Download the pretrained model from this [direct link](https://storage.cloud.google.com/pretrained_models/translate.ckpt-6156696.zip)
+1. Download the pretrained model from this [link](https://entuedu-my.sharepoint.com/:f:/g/personal/boonpeng001_e_ntu_edu_sg/Enw-gLKV70lJjTzFL2979AIBdNmdvf7A-8V02NO__T9Ofg?e=VqB7Mu)
 2. Decompress and put `translate.ckpt-6156696.data-00000-of-00001`, `translate.ckpt-6156696.index` and `translate.ckpt-6156696.meta` under `model/pretrained/active-qa/translate.ckpt-6156696` directory
 
 ## Usage
